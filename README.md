@@ -57,3 +57,4 @@ Complete fullstack MERN billing, invoicing, inventory and sales reporting applic
 
 ## 📦 Hostinger Deployment
 For detailed step-by-step instructions with screenshots and hPanel settings, see [HOSTINGER_DEPLOYMENT_GUIDE.md](./HOSTINGER_DEPLOYMENT_GUIDE.md).
+

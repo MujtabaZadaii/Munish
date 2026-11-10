@@ -6,3 +6,4 @@ router.get('/stats', reportController.getStatsSummary);
 router.get('/annual', reportController.getAnnualReport);
 
 module.exports = router;
+

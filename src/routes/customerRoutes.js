@@ -6,3 +6,4 @@ router.get('/', customerController.getCustomers);
 router.post('/', customerController.saveCustomer);
 
 module.exports = router;
+

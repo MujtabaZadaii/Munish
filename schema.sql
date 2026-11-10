@@ -88,3 +88,4 @@ CREATE TABLE IF NOT EXISTS `app_settings` (
 INSERT INTO `app_settings` (`setting_key`, `setting_value`)
 VALUES ('invoice_counter', '1000')
 ON DUPLICATE KEY UPDATE `setting_key`=`setting_key`;
+

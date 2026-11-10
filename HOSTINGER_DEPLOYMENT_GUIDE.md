@@ -82,3 +82,4 @@
    npm run dev       # Backend server with auto-reload
    npm run client    # React Vite frontend (port 3000)
    ```
+

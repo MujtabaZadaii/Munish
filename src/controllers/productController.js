@@ -214,3 +214,4 @@ module.exports = {
   deleteAllProducts,
   bulkImportProducts
 };
+
