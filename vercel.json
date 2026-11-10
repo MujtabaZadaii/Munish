@@ -1,7 +1,7 @@
 {
-  "version": 2,
-  "name": "aone-billing",
-  "outputDirectory": "public",
+  "framework": "vite",
+  "buildCommand": "cd client && npm install && npm run build",
+  "outputDirectory": "client/dist",
   "rewrites": [
     {
       "source": "/(.*)",
@@ -9,4 +9,3 @@
     }
   ]
 }
-
