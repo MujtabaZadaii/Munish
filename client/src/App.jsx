@@ -71,6 +71,12 @@ function amountInWords(amount) {
   return s + ' Only';
 }
 
+
+const HOSTINGER_BACKEND = 'https://teal-peafowl-102461.hostingersite.com';
+const API_BASE = (typeof window !== 'undefined' && (window.location.hostname.includes('vercel.app') || window.location.hostname.includes('netlify.app')))
+  ? HOSTINGER_BACKEND
+  : (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_BASE ? import.meta.env.VITE_API_BASE.replace(/\/$/, '') : '');
+
 export default function App() {
   const [tab, setTab] = useState('new'); // 'new', 'saved', 'products', 'reports'
   const [dbOnline, setDbOnline] = useState(true);
@@ -132,7 +138,7 @@ export default function App() {
 
   async function fetchNextInvoice() {
     try {
-      const res = await fetch('/api/bills/next-invoice');
+      const res = await fetch(`${API_BASE}/api/bills/next-invoice`);
       const data = await res.json();
       if (data.success && !editingId) {
         setInvoiceNo(data.invoiceNo);
@@ -145,7 +151,7 @@ export default function App() {
 
   async function fetchBills(q = '') {
     try {
-      const url = q ? `/api/bills?q=${encodeURIComponent(q)}` : '/api/bills';
+      const url = q ? `${API_BASE}/api/bills?q=${encodeURIComponent(q)}` : `${API_BASE}/api/bills`;
       const res = await fetch(url);
       const data = await res.json();
       if (data.success) {
@@ -159,7 +165,7 @@ export default function App() {
 
   async function fetchProducts(q = '') {
     try {
-      const url = q ? `/api/products?q=${encodeURIComponent(q)}` : '/api/products';
+      const url = q ? `${API_BASE}/api/products?q=${encodeURIComponent(q)}` : `${API_BASE}/api/products`;
       const res = await fetch(url);
       const data = await res.json();
       if (data.success) {
@@ -173,7 +179,7 @@ export default function App() {
 
   async function fetchStats() {
     try {
-      const res = await fetch('/api/reports/stats');
+      const res = await fetch(`${API_BASE}/api/reports/stats`);
       const data = await res.json();
       if (data.success) setStats(data.stats);
     } catch (e) {}
@@ -181,7 +187,7 @@ export default function App() {
 
   async function fetchReport(year) {
     try {
-      const res = await fetch(`/api/reports/annual?year=${year}`);
+      const res = await fetch(`${API_BASE}/api/reports/annual?year=${year}`);
       const data = await res.json();
       if (data.success) {
         setAnnualReport(data);
@@ -272,7 +278,7 @@ export default function App() {
     };
 
     try {
-      const url = editingId ? `/api/bills/${editingId}` : '/api/bills';
+      const url = editingId ? `${API_BASE}/api/bills/${editingId}` : `${API_BASE}/api/bills`;
       const method = editingId ? 'PUT' : 'POST';
       const res = await fetch(url, {
         method,
@@ -322,7 +328,7 @@ export default function App() {
   async function handleDeleteBill(id, invNo) {
     if (!window.confirm(`Are you sure you want to delete ${invNo} from MySQL?`)) return;
     try {
-      const res = await fetch(`/api/bills/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${API_BASE}/api/bills/${id}`, { method: 'DELETE' });
       const data = await res.json();
       if (data.success) {
         showToast(data.message, 'success');
@@ -340,7 +346,7 @@ export default function App() {
     e.preventDefault();
     if (!pName.trim()) return;
     try {
-      const url = pEditId ? `/api/products/${pEditId}` : '/api/products';
+      const url = pEditId ? `${API_BASE}/api/products/${pEditId}` : `${API_BASE}/api/products`;
       const method = pEditId ? 'PUT' : 'POST';
       const res = await fetch(url, {
         method,
@@ -365,7 +371,7 @@ export default function App() {
   async function handleDeleteProduct(id) {
     if (!window.confirm('Delete this product from MySQL?')) return;
     try {
-      const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${API_BASE}/api/products/${id}`, { method: 'DELETE' });
       const data = await res.json();
       if (data.success) {
         showToast(data.message, 'success');
@@ -405,7 +411,7 @@ export default function App() {
             prods.push({ name: String(r[nameIdx]).trim(), price: Number(r[priceIdx]) || 0 });
           }
         }
-        const res = await fetch('/api/products/bulk', {
+        const res = await fetch(`${API_BASE}/api/products/bulk`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ products: prods, mode: 'update' })
@@ -633,7 +639,7 @@ export default function App() {
                           const val = e.target.value;
                           setCustomer({ ...customer, name: val });
                           if (val.length >= 2) {
-                            fetch(`/api/customers?q=${encodeURIComponent(val)}`)
+                            fetch(`${API_BASE}/api/customers?q=${encodeURIComponent(val)}`)
                               .then((r) => r.json())
                               .then((d) => setCustSuggestions(d.customers || []));
                           } else {
@@ -715,7 +721,7 @@ export default function App() {
                           const val = e.target.value;
                           setAddName(val);
                           if (val.length >= 1) {
-                            fetch(`/api/products?q=${encodeURIComponent(val)}`)
+                            fetch(`${API_BASE}/api/products?q=${encodeURIComponent(val)}`)
                               .then((r) => r.json())
                               .then((d) => setProdSuggestions(d.products || []));
                           } else {
@@ -991,7 +997,7 @@ export default function App() {
                     </div>
                   </div>
                   <div className="col-auto">
-                    <a href="/api/backup/export" className="btn btn-outline-navy">
+                    <a href={`${API_BASE}/api/backup/export`} className="btn btn-outline-navy">
                       <i className="bi bi-download me-1"></i> Backup (JSON)
                     </a>
                   </div>

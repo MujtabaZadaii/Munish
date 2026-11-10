@@ -13,8 +13,13 @@ const backupRoutes = require('./src/routes/backupRoutes');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors());
+// Permissive CORS for Vercel, Hostinger, Localhost & Custom Domains
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
@@ -24,6 +29,7 @@ app.get('/api/health', (req, res) => {
     status: 'online',
     app: 'A-One Trade & Supply Network Billing API',
     database: 'MySQL',
+    db_name: process.env.DB_NAME || 'u468502783_aone_billing',
     timestamp: new Date().toISOString()
   });
 });
@@ -35,7 +41,7 @@ app.use('/api/customers', customerRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/backup', backupRoutes);
 
-// Static frontend serving
+// Static frontend serving (if public folder exists)
 const publicPath = path.join(__dirname, 'public');
 app.use(express.static(publicPath));
 
@@ -44,7 +50,15 @@ app.use((req, res) => {
   if (req.path.startsWith('/api')) {
     return res.status(404).json({ success: false, message: 'API route not found' });
   }
-  res.sendFile(path.join(publicPath, 'index.html'));
+  const indexPath = path.join(publicPath, 'index.html');
+  res.sendFile(indexPath, (err) => {
+    if (err) {
+      res.json({
+        message: 'A-One Billing API is running live on Hostinger.',
+        endpoints: ['/api/health', '/api/bills', '/api/products', '/api/customers', '/api/reports/stats', '/api/reports/annual']
+      });
+    }
+  });
 });
 
 // Global Error Handler
@@ -62,9 +76,8 @@ async function startServer() {
   app.listen(PORT, () => {
     console.log(`====================================================`);
     console.log(` A-One Billing System Server Running on Port ${PORT}`);
-    console.log(` Local URL: http://localhost:${PORT}`);
     console.log(` Health check: http://localhost:${PORT}/api/health`);
-    console.log(` Database: MySQL (${process.env.DB_NAME || 'aone_billing'})`);
+    console.log(` Database: MySQL (${process.env.DB_NAME || 'u468502783_aone_billing'})`);
     console.log(`====================================================`);
   });
 }

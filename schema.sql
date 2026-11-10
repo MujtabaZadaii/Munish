@@ -1,11 +1,7 @@
 -- ========================================================
 -- A-One Trade & Supply Network - Billing Database Schema
--- Compatible with MySQL 5.7+, MySQL 8.0+, MariaDB 10.3+
--- For Hostinger phpMyAdmin or Local MySQL / XAMPP
+-- Compatible with Hostinger phpMyAdmin (No CREATE DATABASE / USE needed)
 -- ========================================================
-
-CREATE DATABASE IF NOT EXISTS `aone_billing` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `aone_billing`;
 
 -- --------------------------------------------------------
 -- 1. Table structure for `customers`
@@ -84,8 +80,7 @@ CREATE TABLE IF NOT EXISTS `app_settings` (
   `setting_value` TEXT NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Initialize default counter
+-- Initialize default invoice counter
 INSERT INTO `app_settings` (`setting_key`, `setting_value`)
 VALUES ('invoice_counter', '1000')
 ON DUPLICATE KEY UPDATE `setting_key`=`setting_key`;
-

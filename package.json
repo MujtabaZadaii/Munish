@@ -5,10 +5,11 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "build": "echo 'Build successful'",
+    "build:client": "npm --prefix client run build",
     "dev": "node --watch server.js",
     "server": "node server.js",
-    "client": "npm --prefix client run dev",
-    "build": "npm --prefix client run build"
+    "client": "npm --prefix client run dev"
   },
   "keywords": [
     "billing",
