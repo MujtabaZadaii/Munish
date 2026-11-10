@@ -1,0 +1,31 @@
+{
+  "name": "aone-billing",
+  "version": "1.0.0",
+  "description": "A-One Trade & Supply Network - Fullstack MERN Billing System with React, Node.js, Express, and MySQL",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "server": "node server.js",
+    "client": "npm --prefix client run dev",
+    "build": "npm --prefix client run build"
+  },
+  "keywords": [
+    "billing",
+    "invoice",
+    "mern",
+    "mysql",
+    "express",
+    "react",
+    "nodejs",
+    "hostinger"
+  ],
+  "author": "Munesh / A-One Trade",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mysql2": "^3.12.0"
+  }
+}
