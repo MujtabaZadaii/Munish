@@ -1,82 +1,67 @@
-# Hostinger Backend & MySQL Setup Guide (مکمل اردو و انگریزی گائیڈ)
+# Hostinger Backend & MySQL Setup Guide (A-One Billing System)
 
-یہ گائیڈ آپ کو بتائے گی کہ **Hostinger** پر بیک اینڈ اور MySQL ڈیٹا بیس کیسے سیٹ کرنا ہے، اور ورسل (Vercel) والے فرنٹ اینڈ کو Hostinger بیک اینڈ سے کیسے جوڑنا ہے۔
-
----
-
-## 1. Hostinger پر کیا کیا ایڈ کرنا ہے؟ (What to add on Hostinger)
-
-### الف. MySQL Database بنانا (Hostinger hPanel میں):
-
-1. اپنے **Hostinger hPanel** میں لاگ ان کریں۔
-2. بائیں جانب مینو سے **Databases** > **MySQL Databases** پر کلک کریں۔
-3. ایک نیا ڈیٹا بیس کریٹ کریں:
-   - **MySQL Database name**: مثلاً `u123456789_aone_db`
-   - **MySQL Username**: مثلاً `u123456789_aone_user`
-   - **Password**: ایک مضبوط پاس ورڈ لکھیں اور یاد رکھیں۔
-   - **Create** بٹن دبائیں۔
-4. اب اسی پیج پر ڈیٹا بیس کے سامنے **Enter phpMyAdmin** بٹن پر کلک کریں۔
-5. phpMyAdmin کے اوپر موجود **Import** ٹیب پر جائیں۔
-6. **Choose File** پر کلک کر کے اس زپ فائل میں موجود **`schema.sql`** کو سلیکٹ کریں اور نیچے **Go / Import** پر کلک کریں۔
-   _(اس سے 5 ٹیبلز: `bills`, `bill_items`, `customers`, `products`, `app_settings` فوراً بن جائیں گے)_
+یہ گائیڈ آپ کے مخصوص Hostinger اکاؤنٹ اور لائیو کریڈینشلز کے مطابق تیار کی گئی ہے۔
 
 ---
 
-### ب. Node.js App بنانا (Hostinger hPanel میں):
+## آپ کے لائیو کریڈینشلز (Your Exact Credentials)
 
-1. Hostinger سرچ بار میں **Node.js** لکھیں اور **Node.js** مینو کھولیں۔
-2. **Create Application** پر کلک کریں:
-   - **Node.js version**: `20.x` یا `22.x`
-   - **Application mode**: `Production`
-   - **Application root**: وہ فولڈر جہاں آپ بیک اینڈ رکھنا چاہتے ہیں (مثلاً `domains/api.yourdomain.com/public_html` یا `api`)
-   - **Application startup file**: `server.js`
-3. **Create** پر کلک کریں۔
+- **Hostinger Domain**: `https://teal-peafowl-102461.hostingersite.com`
+- **Vercel Frontend URL**: `https://aone-billing.vercel.app`
+- **MySQL Database Name**: `u468502783_aone_billing`
+- **MySQL Username**: `u468502783_anone`
+- **MySQL Password**: `Mujtabazadaii112`
+- **MySQL Host**: `localhost` (پورٹ `3306`)
 
 ---
 
-### ج. Backend Files اپلوڈ کرنا:
+## 1. phpMyAdmin میں Error #1044 کیوں آیا تھا اور کیسے حل ہوا؟
 
-1. Hostinger کے **File Manager** میں جائیں۔
-2. اپنے اس ایپلی کیشن والے فولڈر میں جائیں۔
-3. **`backend_hostinger.zip`** فائل کو اپلوڈ کر کے **Extract** کریں۔
-4. فولڈر کے اندر ایک فائل بنائیں یا موجودہ `.env.example` کو رینیم کر کے **`.env`** بنائیں۔
-5. اس میں اپنے Hostinger والے ڈیٹا بیس کی تفصیلات درج کریں:
+- **وجہ**: پہلے `schema.sql` میں `CREATE DATABASE IF NOT EXISTS aone_billing;` لکھا تھا، چونکہ ہوسٹنگر پر ڈیٹا بیس کا نام `u468502783_aone_billing` پہلے سے بن چکا ہوتا ہے، اس لیے یوزر کو نیا ڈیٹا بیس بنانے کی اجازت نہیں تھی اور Error 1044 آتا تھا۔
+- **حل**: ہم نے `schema.sql` سے `CREATE DATABASE` اور `USE` ختم کر دیا ہے۔ اب آپ phpMyAdmin میں `u468502783_aone_billing` پر کلک کر کے نیا `schema.sql` امپورٹ کریں گے تو 1 سیکنڈ میں سارے ٹیبلز (`bills`, `bill_items`, `customers`, `products`, `app_settings`) بن جائیں گے۔
 
+---
+
+## 2. Hostinger پر Backend کیسے اپلوڈ اور چلانا ہے؟
+
+1. **`backend_hostinger.zip`** فائل اپنے کمپیوٹر پر ڈاؤن لوڈ کریں۔
+2. Hostinger **File Manager** میں جائیں:
+   - راستہ: `domains/teal-peafowl-102461.hostingersite.com/public_html`
+3. یہاں `backend_hostinger.zip` کو اپلوڈ کر کے **Extract** کریں۔
+4. فولڈر میں موجود **`.env`** فائل چیک کریں، اس میں یہ سیٹنگز پہلے سے لکھی ہوئی ہیں:
    ```env
    PORT=5000
    NODE_ENV=production
 
    DB_HOST=localhost
-   DB_USER=u123456789_aone_user
-   DB_PASSWORD=ApkaDatabasePassword
-   DB_NAME=u123456789_aone_db
+   DB_USER=u468502783_anone
+   DB_PASSWORD=Mujtabazadaii112
+   DB_NAME=u468502783_aone_billing
    DB_PORT=3306
+
+   FRONTEND_URL=https://aone-billing.vercel.app
    ```
-
-6. فائل کو **Save** کر دیں۔
-
----
-
-### د. پیکجز انسٹال کرنا اور ایپ رن کرنا:
-
-1. واپس Hostinger کے **Node.js** پیج پر جائیں۔
-2. **NPM Install** بٹن دبائیں (یا ٹرمینل میں `npm install --omit=dev` چلائیں)۔
-3. **Restart Application** کا بٹن دبائیں۔
-4. آپ کا بیک اینڈ لائیو ہو جائے گا! چیک کرنے کے لیے براؤزر میں کھولیں:
-   `https://your-domain.com/api/health`
-   آپ کو نظر آئے گا:
+5. Hostinger کے **Node.js** مینو میں جائیں:
+   - **Entry File**: `server.js`
+   - **Node.js version**: 20 یا 22
+   - **NPM Install** کا بٹن دبائیں۔
+   - **Restart Application** کا بٹن دبائیں۔
+6. چیک کرنے کے لیے لنک کھولیں:
+   `https://teal-peafowl-102461.hostingersite.com/api/health`
+   اگر یہ جواب آئے تو بیک اینڈ 100% پرفیکٹ چل رہا ہے:
    ```json
-   { "status": "online", "database": "MySQL" }
+   {
+     "status": "online",
+     "app": "A-One Trade & Supply Network Billing API",
+     "database": "MySQL",
+     "db_name": "u468502783_aone_billing"
+   }
    ```
 
 ---
 
-## 2. Vercel فرنٹ اینڈ کو Hostinger بیک اینڈ سے کیسے جوڑنا ہے؟
+## 3. Vercel فرنٹ اینڈ (`https://aone-billing.vercel.app`)
 
-اگر آپ کا فرنٹ اینڈ **`aone-billing.vercel.app`** پر ہے اور بیک اینڈ Hostinger پر (مثلاً `https://api.yourdomain.com`):
-
-- `vercel.json` میں ری رائٹ رول پہلے سے شامل ہے جو Vercel سے آنے والی `/api/*` ریکویسٹس کو Hostinger کی طرف فارورڈ کرتا ہے۔
-- یا Vercel کے پروجیکٹ سیٹنگز میں Environment Variable ایڈ کریں:
-  - Key: `VITE_API_BASE`
-  - Value: `https://your-hostinger-domain.com`
-- اس طرح Vercel کا فرنٹ اینڈ سیدھا آپ کے Hostinger MySQL بیک اینڈ کے ساتھ 100% کنیکٹ ہو جائے گا!
+- ورسل پر موجود فرنٹ اینڈ خودکار طور پر آپ کے ہوسٹنگر بیک اینڈ (`https://teal-peafowl-102461.hostingersite.com`) کے ساتھ جڑ چکا ہے۔
+- ہیڈر میں **MySQL Live** کا سبز بیج (Green Badge) نظر آئے گا۔
+- جیسے ہی آپ کوئی نیا بل بنائیں گے یا پروڈکٹ سیو کریں گے، وہ فوراً آپ کے Hostinger MySQL ڈیٹا بیس میں محفوظ ہو جائے گا اور پی ڈی ایف انوائس ڈاؤن لوڈ ہو جائے گی۔

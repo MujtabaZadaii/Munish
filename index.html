@@ -184,6 +184,7 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
         <div class="brand-meta">
           <span><i class="bi bi-person-badge-fill"></i>Salesman: <strong>Munesh </strong></span>
           <span><i class="bi bi-whatsapp"></i><a href="https://wa.me/923223968631" target="_blank" rel="noopener">+92 322 3968631</a></span>
+          <span id="dbBadge" class="badge rounded-pill bg-success-subtle text-success border border-success-subtle px-2 py-1"><i class="bi bi-database-check me-1"></i>MySQL Live</span>
         </div>
       </div>
     </div>
@@ -508,6 +509,158 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
   };
 
   /* ------------------------------------------------------------
+     0.1. MYSQL BACKEND & REST API INTEGRATION
+     ------------------------------------------------------------ */
+  var HOSTINGER_BACKEND = 'https://teal-peafowl-102461.hostingersite.com';
+  var API_BASE = (typeof window !== 'undefined' && (window.location.hostname.includes('vercel.app') || window.location.hostname.includes('netlify.app')))
+    ? HOSTINGER_BACKEND
+    : '';
+
+  var dbBills = [];
+  var dbProducts = [];
+  var dbCustomers = [];
+  var isServerOnline = true;
+
+  function updateDbBadge(online) {
+    isServerOnline = !!online;
+    var badge = $('#dbBadge');
+    if (!badge) return;
+    if (online) {
+      badge.className = 'badge rounded-pill bg-success-subtle text-success border border-success-subtle px-2 py-1';
+      badge.innerHTML = '<i class="bi bi-database-check me-1"></i>MySQL Live';
+    } else {
+      badge.className = 'badge rounded-pill bg-warning-subtle text-warning border border-warning-subtle px-2 py-1';
+      badge.innerHTML = '<i class="bi bi-cloud-slash me-1"></i>Offline (Cached)';
+    }
+  }
+
+  var api = {
+    async getNextInvoice() {
+      try {
+        var r = await fetch(API_BASE + '/api/bills/next-invoice');
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        var d = await r.json();
+        updateDbBadge(true);
+        if (d && d.success) return d.invoiceNo;
+      } catch (e) {
+        updateDbBadge(false);
+      }
+      return null;
+    },
+    async getBills(q) {
+      try {
+        var url = q ? API_BASE + '/api/bills?q=' + encodeURIComponent(q) : API_BASE + '/api/bills';
+        var r = await fetch(url);
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        var d = await r.json();
+        updateDbBadge(true);
+        if (d && d.success) return d.bills;
+      } catch (e) {
+        updateDbBadge(false);
+      }
+      return null;
+    },
+    async saveBill(bill, isUpdate) {
+      var url = isUpdate ? API_BASE + '/api/bills/' + encodeURIComponent(bill.id) : API_BASE + '/api/bills';
+      var r = await fetch(url, {
+        method: isUpdate ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bill)
+      });
+      return await r.json();
+    },
+    async deleteBill(id) {
+      var r = await fetch(API_BASE + '/api/bills/' + encodeURIComponent(id), { method: 'DELETE' });
+      return await r.json();
+    },
+    async getProducts(q) {
+      try {
+        var url = q ? API_BASE + '/api/products?q=' + encodeURIComponent(q) : API_BASE + '/api/products';
+        var r = await fetch(url);
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        var d = await r.json();
+        updateDbBadge(true);
+        if (d && d.success) return d.products;
+      } catch (e) {
+        updateDbBadge(false);
+      }
+      return null;
+    },
+    async saveProduct(p, id) {
+      var url = id ? API_BASE + '/api/products/' + encodeURIComponent(id) : API_BASE + '/api/products';
+      var r = await fetch(url, {
+        method: id ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(p)
+      });
+      return await r.json();
+    },
+    async deleteProduct(id) {
+      var r = await fetch(API_BASE + '/api/products/' + encodeURIComponent(id), { method: 'DELETE' });
+      return await r.json();
+    },
+    async deleteAllProducts() {
+      var r = await fetch(API_BASE + '/api/products', { method: 'DELETE' });
+      return await r.json();
+    },
+    async bulkImport(products, mode) {
+      var r = await fetch(API_BASE + '/api/products/bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ products: products, mode: mode })
+      });
+      return await r.json();
+    },
+    async getCustomers(q) {
+      try {
+        var url = q ? API_BASE + '/api/customers?q=' + encodeURIComponent(q) : API_BASE + '/api/customers';
+        var r = await fetch(url);
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        var d = await r.json();
+        updateDbBadge(true);
+        if (d && d.success) return d.customers;
+      } catch (e) {
+        updateDbBadge(false);
+      }
+      return null;
+    },
+    async getStats() {
+      try {
+        var r = await fetch(API_BASE + '/api/reports/stats');
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        var d = await r.json();
+        updateDbBadge(true);
+        if (d && d.success) return d.stats;
+      } catch (e) {
+        updateDbBadge(false);
+      }
+      return null;
+    },
+    async getAnnualReport(year) {
+      try {
+        var url = year ? API_BASE + '/api/reports/annual?year=' + encodeURIComponent(year) : API_BASE + '/api/reports/annual';
+        var r = await fetch(url);
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        var d = await r.json();
+        updateDbBadge(true);
+        if (d && d.success) return d;
+      } catch (e) {
+        updateDbBadge(false);
+      }
+      return null;
+    },
+    async restoreBackup(data, mode) {
+      var r = await fetch(API_BASE + '/api/backup/restore?mode=' + encodeURIComponent(mode), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      return await r.json();
+    }
+  };
+
+
+  /* ------------------------------------------------------------
      1. SMALL HELPERS
      ------------------------------------------------------------ */
   function $(sel, root) { return (root || document).querySelector(sel); }
@@ -582,10 +735,10 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
     }
   };
 
-  function loadBills() { var b = store.get(K.bills, []); return Array.isArray(b) ? b : []; }
-  function saveBills(list) { return store.set(K.bills, list); }
-  function loadCustomers() { var c = store.get(K.customers, []); return Array.isArray(c) ? c : []; }
-  function loadProducts() { var p = store.get(K.products, []); return Array.isArray(p) ? p : []; }
+  function loadBills() { return (dbBills && dbBills.length) ? dbBills : (store.get(K.bills, []) || []); }
+  function saveBills(list) { dbBills = list || []; return store.set(K.bills, dbBills); }
+  function loadCustomers() { return (dbCustomers && dbCustomers.length) ? dbCustomers : (store.get(K.customers, []) || []); }
+  function loadProducts() { return (dbProducts && dbProducts.length) ? dbProducts : (store.get(K.products, []) || []); }
 
   /* ------------------------------------------------------------
      3. UI HELPERS: toast + modal
@@ -1132,31 +1285,47 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
     };
   }
 
-  function saveBill(silent) {
+  async function saveBill(silent) {
     if (!validateBill()) return null;
-    // make sure the invoice number is still unique (e.g. after a restore)
     if (invoiceTaken(state.invoiceNo, state.editingId)) {
       var old = state.invoiceNo; state.invoiceNo = nextInvoiceNo(); $('#invNo').value = state.invoiceNo;
       toast('Invoice ' + old + ' already exists, using ' + state.invoiceNo + ' instead.', 'info', 4000);
     }
     var bill = buildBill();
-    var list = loadBills();
-    var idx = -1;
-    for (var i = 0; i < list.length; i++) { if (list[i].id === bill.id) { idx = i; break; } }
-    var isUpdate = idx >= 0;
-    if (isUpdate) list[idx] = bill; else list.push(bill);
-    saveBills(list);
+    var isUpdate = !!state.editingId;
 
-    var m = /(\d+)\s*$/.exec(bill.invoiceNo);
-    if (m) store.set(K.counter, Math.max(Number(store.get(K.counter, 0)) || 0, parseInt(m[1], 10)));
+    try {
+      var res = await api.saveBill(bill, isUpdate);
+      if (!res.success) throw new Error(res.message || 'Could not save bill');
 
-    rememberCustomer(bill.customer);
-    bill.items.forEach(function (it) { rememberProduct(it.name, it.price); });
+      var list = loadBills();
+      var idx = -1;
+      for (var i = 0; i < list.length; i++) { if (list[i].id === bill.id) { idx = i; break; } }
+      if (idx >= 0) list[idx] = bill; else list.unshift(bill);
+      saveBills(list);
 
-    state.editingId = bill.id; state.createdAt = bill.createdAt;
-    dirty = false; clearDraft(); renderBanner(); refreshSavedCount();
-    if (!silent) toast('Bill ' + bill.invoiceNo + (isUpdate ? ' updated.' : ' saved.'), 'success');
-    return bill;
+      var m = /(\d+)\s*$/.exec(bill.invoiceNo);
+      if (m) store.set(K.counter, Math.max(Number(store.get(K.counter, 0)) || 0, parseInt(m[1], 10)));
+
+      rememberCustomer(bill.customer);
+      bill.items.forEach(function (it) { rememberProduct(it.name, it.price); });
+
+      state.editingId = bill.id; state.createdAt = bill.createdAt;
+      dirty = false; clearDraft(); renderBanner(); refreshSavedCount();
+      if (!silent) toast('Bill ' + bill.invoiceNo + (isUpdate ? ' updated in MySQL.' : ' saved to MySQL database.'), 'success');
+      return bill;
+    } catch (err) {
+      console.warn('MySQL save fallback:', err.message);
+      var list = loadBills();
+      var idx = -1;
+      for (var i = 0; i < list.length; i++) { if (list[i].id === bill.id) { idx = i; break; } }
+      if (idx >= 0) list[idx] = bill; else list.unshift(bill);
+      saveBills(list);
+      state.editingId = bill.id; state.createdAt = bill.createdAt;
+      dirty = false; clearDraft(); renderBanner(); refreshSavedCount();
+      if (!silent) toast('Bill ' + bill.invoiceNo + ' saved locally (Offline mode).', 'warning');
+      return bill;
+    }
   }
 
   function newBill(force) {
@@ -1494,26 +1663,30 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
      ------------------------------------------------------------ */
   function refreshSavedCount() { $('#savedCount').textContent = loadBills().length; }
 
-  function renderStats(bills) {
-    var today = todayISO(), month = today.slice(0, 7);
-    var td = { n: 0, t: 0 }, mo = { n: 0, t: 0 }, due = 0, dueN = 0;
-    bills.forEach(function (b) {
-      if (b.date === today) { td.n++; td.t += b.grandTotal; }
-      if ((b.date || '').slice(0, 7) === month) { mo.n++; mo.t += b.grandTotal; }
-      if (b.balance > 0.004) { due += b.balance; dueN++; }
-    });
+  async function renderStats(bills) {
+    var stats = await api.getStats();
+    if (!stats) {
+      var today = todayISO(), month = today.slice(0, 7);
+      var td = { count: 0, total: 0 }, mo = { count: 0, total: 0 }, due = 0, dueN = 0;
+      (bills || loadBills()).forEach(function (b) {
+        if (b.date === today) { td.count++; td.total += Number(b.grandTotal) || 0; }
+        if ((b.date || '').slice(0, 7) === month) { mo.count++; mo.total += Number(b.grandTotal) || 0; }
+        if (b.balance > 0.004) { due += Number(b.balance) || 0; dueN++; }
+      });
+      stats = { today: td, month: mo, pending: { total: due, count: dueN } };
+    }
     function card(k, v, s) { return '<div class="col-12 col-md-4"><div class="stat-card"><div class="k">' + k + '</div><div class="v">' + v + '</div><div class="s">' + s + '</div></div></div>'; }
     $('#statsRow').innerHTML =
-      card('Today', rs(td.t), td.n + (td.n === 1 ? ' bill' : ' bills')) +
-      card('This month', rs(mo.t), mo.n + (mo.n === 1 ? ' bill' : ' bills')) +
-      card('Pending balance', rs(due), dueN + (dueN === 1 ? ' bill' : ' bills') + ' with balance due');
+      card('Today', rs(stats.today.total), stats.today.count + (stats.today.count === 1 ? ' bill' : ' bills')) +
+      card('This month', rs(stats.month.total), stats.month.count + (stats.month.count === 1 ? ' bill' : ' bills')) +
+      card('Pending balance', rs(stats.pending.total), stats.pending.count + (stats.pending.count === 1 ? ' bill' : ' bills') + ' with balance due');
   }
 
   function renderAnnualReport() {
     var yearSelect = $('#reportYear');
     if (!yearSelect.options.length) {
       var years = {};
-      loadBills().forEach(function (b) { var y = String((b.date || '').slice(0, 4)); if (/^\\d{4}$/.test(y)) years[y] = true; });
+      loadBills().forEach(function (b) { var y = String((b.date || '').slice(0, 4)); if (/^\d{4}$/.test(y)) years[y] = true; });
       var currentYear = String(new Date().getFullYear());
       years[currentYear] = true;
       Object.keys(years).sort().reverse().forEach(function (y) {
@@ -1548,24 +1721,17 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
     }).join('') : '<tr><td colspan="4" class="text-center text-muted py-4">No saved bills found for ' + esc(year) + '.</td></tr>';
   }
 
-  function renderSaved() {
-    var all = loadBills();
-    renderStats(all);
-    var q = $('#searchBox').value.trim().toLowerCase();
-    var pq = isPhoneQuery(q), qd = phoneDigits(q), qc = phoneCore(q);
-    var list = all.filter(function (b) {
-      if (!q) return true;
-      return (b.customer.name || '').toLowerCase().indexOf(q) !== -1 ||
-        (b.invoiceNo || '').toLowerCase().indexOf(q) !== -1 ||
-        (pq && (phoneDigits(b.customer.phone).indexOf(qd) !== -1 || (qc && phoneCore(b.customer.phone).indexOf(qc) !== -1)));
-    }).sort(function (a, b) {
-      return (b.date || '').localeCompare(a.date || '') || (b.createdAt || 0) - (a.createdAt || 0);
-    });
+  async function renderSaved() {
+    var q = $('#searchBox').value.trim();
+    var list = await api.getBills(q);
+    if (!list) list = loadBills();
+    else { dbBills = list; store.set(K.bills, list); }
+    renderStats(list);
 
     var el = $('#billsList');
     if (!list.length) {
       el.innerHTML = '<div class="empty-state card card-soft py-5"><i class="bi bi-folder2-open"></i>' +
-        (all.length ? 'No bills match your search.' : 'No saved bills yet. Create a bill and press <strong>Save Bill</strong>.') + '</div>';
+        (loadBills().length ? 'No bills match your search.' : 'No saved bills yet. Create a bill and press <strong>Save Bill</strong>.') + '</div>';
       return;
     }
     el.innerHTML = list.map(function (b) {
@@ -1598,12 +1764,18 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
     } else if (act === 'pdf') deliverPDF(b);
     else if (act === 'wa') whatsappFor(b);
     else if (act === 'del') {
-      confirmDialog('Delete bill ' + b.invoiceNo + '?', 'This will permanently delete the bill for ' + b.customer.name + '. This cannot be undone.', 'Delete', true).then(function (ok) {
+      confirmDialog('Delete bill ' + b.invoiceNo + '?', 'This will permanently delete the bill for ' + b.customer.name + ' from MySQL. This cannot be undone.', 'Delete', true).then(async function (ok) {
         if (!ok) return;
+        try {
+          var res = await api.deleteBill(id);
+          if (!res.success) throw new Error(res.message);
+          toast('Bill ' + b.invoiceNo + ' deleted from MySQL.', 'success');
+        } catch (err) {
+          toast('Deleted locally: ' + err.message, 'warning');
+        }
         saveBills(loadBills().filter(function (x) { return x.id !== id; }));
         if (state.editingId === id) { state.editingId = null; renderBanner(); }
         refreshSavedCount(); renderSaved();
-        toast('Bill ' + b.invoiceNo + ' deleted.', 'success');
       });
     }
   }
@@ -1645,15 +1817,16 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
     $('#productCancelWrap').classList.add('d-none');
   }
 
-  function renderProducts() {
-    var all = loadProducts(), q = ($('#productSearch').value || '').trim().toLowerCase();
-    var list = all.filter(function (p) { return !q || String(p.name || '').toLowerCase().indexOf(q) !== -1; })
-      .sort(function (a, b) { return String(a.name).localeCompare(String(b.name)); });
+  async function renderProducts() {
+    var q = ($('#productSearch').value || '').trim();
+    var all = await api.getProducts(q);
+    if (all) { dbProducts = all; store.set(K.products, all); }
+    else { all = loadProducts(); }
+
     $('#productCount').textContent = all.length;
-    $('#productListCount').textContent = list.length + (list.length === 1 ? ' product' : ' products');
-    $('#productsList').innerHTML = list.length ? list.map(function (p) {
-      var originalIndex = all.indexOf(p);
-      return '<div class="product-row" data-product-index="' + originalIndex + '">' +
+    $('#productListCount').textContent = all.length + (all.length === 1 ? ' product' : ' products');
+    $('#productsList').innerHTML = all.length ? all.map(function (p, idx) {
+      return '<div class="product-row" data-id="' + (p.id || '') + '" data-product-index="' + idx + '">' +
         '<div class="me-auto"><div class="product-name">' + esc(p.name) + '</div><div class="product-price">' + esc(rs(p.price)) + '</div></div>' +
         '<div class="product-actions"><button type="button" class="btn btn-sm btn-outline-navy product-edit" title="Edit"><i class="bi bi-pencil"></i> Edit</button>' +
         '<button type="button" class="btn btn-sm btn-outline-danger product-delete" title="Delete"><i class="bi bi-trash3"></i> Delete</button></div></div>';
@@ -1722,21 +1895,30 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
     else reader.readAsArrayBuffer(file);
   }
 
+  async function syncAllData() {
+    var [nextInv, b, p, c] = await Promise.all([
+      api.getNextInvoice(),
+      api.getBills(),
+      api.getProducts(),
+      api.getCustomers()
+    ]);
+    if (b) { dbBills = b; store.set(K.bills, b); }
+    if (p) { dbProducts = p; store.set(K.products, p); }
+    if (c) { dbCustomers = c; store.set(K.customers, c); }
+    if (nextInv && state && !state.editingId && !dirty) {
+      state.invoiceNo = nextInv;
+      $('#invNo').value = nextInv;
+    }
+    refreshSavedCount();
+    renderProducts();
+  }
+
   /* ------------------------------------------------------------
      16. BACKUP / RESTORE
      ------------------------------------------------------------ */
   function exportBackup() {
-    var data = {
-      app: 'aone-billing', version: 1, exportedAt: new Date().toISOString(),
-      bills: loadBills(), customers: loadCustomers(), products: loadProducts(),
-      counter: Number(store.get(K.counter, 0)) || 0
-    };
-    if (!data.bills.length && !data.customers.length && !data.products.length) { toast('There is no saved data to back up yet.', 'warning'); return; }
-    try {
-      var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      downloadBlob(blob, 'A-One-Backup-' + todayISO() + '.json');
-      toast('Backup downloaded: ' + data.bills.length + ' bills and ' + data.products.length + ' products.', 'success');
-    } catch (e) { toast('Backup failed: ' + e.message, 'danger'); }
+    window.location.href = API_BASE + '/api/backup/export';
+    toast('Downloading full database backup from MySQL...', 'info', 3000);
   }
 
   /** Validate + clean one bill from a backup file. Returns null when unusable. */
@@ -1868,41 +2050,52 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
       if (this.files && this.files[0]) importProductFile(this.files[0]);
       this.value = '';
     });
-    $('#productForm').addEventListener('submit', function (e) {
+    $('#productForm').addEventListener('submit', async function (e) {
       e.preventDefault();
       var p = normalizeProduct({ name: $('#productName').value, price: $('#productPrice').value });
-      if (!p) { toast('Enter a product name and a valid selling price (zero or more).', 'warning'); return; }
-      var result;
-      if (productEditIndex >= 0) {
-        var current = loadProducts(), duplicate = current.some(function (item, i) { return i !== productEditIndex && productKey(item.name) === productKey(p.name); });
-        if (duplicate) { toast('Another product already uses this name. Choose a different name.', 'warning'); return; }
-        if (current[productEditIndex]) { current[productEditIndex] = { name: p.name, price: p.price, last: Date.now() }; store.set(K.products, current); result = 'updated'; }
-        else result = saveProductRecord(p, 'skip');
-      } else result = saveProductRecord(p, 'skip');
-      clearProductForm(); renderProducts();
-      toast(result === 'added' ? 'Product added.' : (result === 'updated' ? 'Product updated.' : 'A product with this name already exists.'), result === 'skipped' ? 'warning' : 'success');
+      if (!p) { toast('Enter a product name and a valid selling price.', 'warning'); return; }
+      var editingId = (productEditIndex >= 0 && dbProducts[productEditIndex]) ? dbProducts[productEditIndex].id : null;
+      try {
+        var res = await api.saveProduct(p, editingId);
+        if (!res.success) throw new Error(res.message);
+        clearProductForm();
+        await renderProducts();
+        toast(res.message || 'Product saved to MySQL.', 'success');
+      } catch (err) {
+        toast('Product saved locally: ' + err.message, 'warning');
+        saveProductRecord(p, 'skip');
+        clearProductForm();
+        renderProducts();
+      }
     });
     $('#productCancelBtn').addEventListener('click', clearProductForm);
 
-    // Delete every saved product after an explicit confirmation.
     $('#deleteAllProductsBtn').addEventListener('click', function () {
       var allProducts = loadProducts();
-      if (!allProducts.length) {
-        toast('There are no saved products to delete.', 'info');
-        return;
-      }
+      if (!allProducts.length) { toast('There are no saved products to delete.', 'info'); return; }
       confirmDialog(
-        'Delete all products?',
-        'This will permanently delete all ' + allProducts.length + ' saved product(s). Existing bills and their items will not be changed. This action cannot be undone.',
+        'Delete all products from MySQL?',
+        'This will permanently delete all ' + allProducts.length + ' saved product(s) from MySQL database. This action cannot be undone.',
         'Delete all products',
         true
-      ).then(function (ok) {
+      ).then(async function (ok) {
         if (!ok) return;
-        store.set(K.products, []);
-        clearProductForm();
-        $('#productSearch').value = '';
-        renderProducts();
-        toast('All ' + allProducts.length + ' saved product(s) deleted.', 'success', 5000);
+        try {
+          var res = await api.deleteAllProducts();
+          if (!res.success) throw new Error(res.message);
+          dbProducts = [];
+          store.set(K.products, []);
+          clearProductForm();
+          $('#productSearch').value = '';
+          await renderProducts();
+          toast('All products deleted from MySQL database.', 'success', 5000);
+        } catch (err) {
+          store.set(K.products, []);
+          clearProductForm();
+          $('#productSearch').value = '';
+          renderProducts();
+          toast('Deleted locally: ' + err.message, 'warning');
+        }
       });
     });
 
@@ -1916,11 +2109,26 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
         $('#productCancelWrap').classList.remove('d-none');
         $('#productName').focus(); window.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (e.target.closest('.product-delete')) {
-        confirmDialog('Delete product?', '“' + p.name + '” will be removed from saved products. Existing bills will not be changed.', 'Delete product', true).then(function (ok) {
+        confirmDialog('Delete product?', '“' + p.name + '” will be removed from MySQL database.', 'Delete product', true).then(async function (ok) {
           if (!ok) return;
-          list.splice(idx, 1); store.set(K.products, list);
-          if (productEditIndex === idx) clearProductForm();
-          renderProducts(); toast('Product deleted.', 'success');
+          try {
+            if (p.id) {
+              var res = await api.deleteProduct(p.id);
+              if (!res.success) throw new Error(res.message);
+            }
+            list.splice(idx, 1);
+            dbProducts = list;
+            store.set(K.products, list);
+            if (productEditIndex === idx) clearProductForm();
+            await renderProducts();
+            toast('Product deleted from MySQL.', 'success');
+          } catch (err) {
+            list.splice(idx, 1);
+            store.set(K.products, list);
+            if (productEditIndex === idx) clearProductForm();
+            renderProducts();
+            toast('Deleted locally: ' + err.message, 'warning');
+          }
         });
       }
     });
@@ -1965,6 +2173,7 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
     refreshSavedCount();
     renderProducts();
     syncFormFromState();
+    syncAllData();
 
     if (!(window.jspdf && window.jspdf.jsPDF)) {
       toast('PDF engine not loaded yet. The first visit needs internet so the browser can cache it.', 'warning', 6000);
