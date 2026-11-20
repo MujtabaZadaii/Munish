@@ -481,11 +481,145 @@ async function deleteBill(req, res) {
   }
 }
 
+// POST /api/bills/bulk
+async function createBulkBills(req, res) {
+  const connection = await pool.getConnection();
+  try {
+    await connection.beginTransaction();
+
+    const { bills } = req.body;
+    if (!Array.isArray(bills) || bills.length === 0) {
+      throw new Error('Please provide an array of bills to import.');
+    }
+
+    let addedCount = 0;
+    let updatedCount = 0;
+    let maxInvoiceNum = 0;
+
+    for (const b of bills) {
+      if (!b || !Array.isArray(b.items) || b.items.length === 0) continue;
+      const id = String(b.id || uid());
+      const invoiceNo = String(b.invoiceNo || 'INV-0000').trim().slice(0, 50);
+      const date = /^\d{4}-\d{2}-\d{2}$/.test(b.date || '') ? b.date : new Date().toISOString().slice(0, 10);
+      const customer = b.customer || {};
+      const custName = String(customer.name || 'Walk-in Customer').trim().slice(0, 150);
+      const custPhone = String(customer.phone || '').trim().slice(0, 50);
+      const custAddress = String(customer.address || '').trim();
+
+      const calc = calculateBill(b);
+      const createdAt = Number(b.createdAt) || Date.now();
+      const updatedAt = Number(b.updatedAt) || Date.now();
+
+      const [existing] = await connection.query(
+        'SELECT id FROM bills WHERE id = ? OR invoice_no = ?',
+        [id, invoiceNo]
+      );
+
+      let targetId = id;
+      if (existing.length > 0) {
+        targetId = existing[0].id;
+        await connection.query(
+          `UPDATE bills SET
+            invoice_no = ?, bill_date = ?, customer_name = ?, customer_phone = ?, customer_address = ?,
+            disc_type = ?, disc_value = ?, charges = ?, received = ?, subtotal = ?, discount_amt = ?,
+            grand_total = ?, balance = ?, updated_at = ?
+           WHERE id = ?`,
+          [
+            invoiceNo, date, custName, custPhone, custAddress,
+            b.discType === 'pct' ? 'pct' : 'rs', num(b.discValue), num(b.charges), num(b.received),
+            calc.subtotal, calc.discountAmt, calc.grand, calc.balance, updatedAt, targetId
+          ]
+        );
+        await connection.query('DELETE FROM bill_items WHERE bill_id = ?', [targetId]);
+        updatedCount++;
+      } else {
+        await connection.query(
+          `INSERT INTO bills (
+            id, invoice_no, bill_date, customer_name, customer_phone, customer_address,
+            disc_type, disc_value, charges, received, subtotal, discount_amt, grand_total, balance,
+            created_at, updated_at
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [
+            id, invoiceNo, date, custName, custPhone, custAddress,
+            b.discType === 'pct' ? 'pct' : 'rs', num(b.discValue), num(b.charges), num(b.received),
+            calc.subtotal, calc.discountAmt, calc.grand, calc.balance, createdAt, updatedAt
+          ]
+        );
+        addedCount++;
+      }
+
+      for (let i = 0; i < b.items.length; i++) {
+        const it = b.items[i];
+        const ln = calc.lines[i] || { gross: 0, disc: 0, net: 0 };
+        await connection.query(
+          `INSERT INTO bill_items (
+            bill_id, item_order, name, qty, price, disc, disc_type, gross, line_disc, net
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [
+            targetId, i, String(it.name || '').trim(), num(it.qty), num(it.price), num(it.disc),
+            it.discType === 'pct' ? 'pct' : 'rs', ln.gross, ln.disc, ln.net
+          ]
+        );
+
+        if (it.name && num(it.price) > 0) {
+          await connection.query(
+            `INSERT INTO products (name, price) VALUES (?, ?)
+             ON DUPLICATE KEY UPDATE price = VALUES(price), updated_at = CURRENT_TIMESTAMP`,
+            [String(it.name).trim(), num(it.price)]
+          );
+        }
+      }
+
+      if (custName && custPhone) {
+        const [foundCust] = await connection.query('SELECT id FROM customers WHERE phone = ?', [custPhone]);
+        if (foundCust.length > 0) {
+          await connection.query(
+            'UPDATE customers SET name = ?, address = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+            [custName, custAddress, foundCust[0].id]
+          );
+        } else {
+          await connection.query(
+            'INSERT INTO customers (name, phone, address) VALUES (?, ?, ?)',
+            [custName, custPhone, custAddress]
+          );
+        }
+      }
+
+      const m = /(\d+)\s*$/.exec(invoiceNo);
+      if (m) maxInvoiceNum = Math.max(maxInvoiceNum, parseInt(m[1], 10));
+    }
+
+    if (maxInvoiceNum > 0) {
+      await connection.query(
+        `INSERT INTO app_settings (setting_key, setting_value) VALUES ('invoice_counter', ?)
+         ON DUPLICATE KEY UPDATE setting_value = GREATEST(CAST(setting_value AS UNSIGNED), ?)`,
+        [String(maxInvoiceNum), maxInvoiceNum]
+      );
+    }
+
+    await connection.commit();
+
+    res.json({
+      success: true,
+      message: `Bulk import completed: ${addedCount} bills added, ${updatedCount} bills updated.`,
+      addedCount,
+      updatedCount
+    });
+  } catch (err) {
+    await connection.rollback();
+    console.error('Error in createBulkBills:', err);
+    res.status(500).json({ success: false, message: err.message });
+  } finally {
+    connection.release();
+  }
+}
+
 module.exports = {
   getNextInvoiceNo,
   getBills,
   getBillById,
   createBill,
+  createBulkBills,
   updateBill,
   deleteBill
 };

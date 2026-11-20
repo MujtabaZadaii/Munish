@@ -168,6 +168,168 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
 .product-price{font-weight:800;color:var(--navy);white-space:nowrap}
 @media(max-width:575.98px){.product-row{align-items:flex-start;flex-wrap:wrap}.product-actions{width:100%;justify-content:flex-end}}
 .page-foot{text-align:center;color:var(--muted);font-size:.85rem;padding:1.5rem 0 2.5rem}
+
+/* ---------- Awwwards & Advanced UX Polish ---------- */
+@keyframes amFadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulseGreen {
+  0% { box-shadow: 0 0 0 0 rgba(25, 135, 84, 0.6); }
+  70% { box-shadow: 0 0 0 7px rgba(25, 135, 84, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(25, 135, 84, 0); }
+}
+.animate-fade-up {
+  animation: amFadeUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.live-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #198754;
+  display: inline-block;
+  margin-right: 6px;
+  animation: pulseGreen 2s infinite;
+}
+.filter-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+.filter-pill {
+  border: 1.5px solid var(--line);
+  border-radius: 20px;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: #fff;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+.filter-pill:hover {
+  border-color: var(--navy);
+  color: var(--navy);
+}
+.filter-pill.active {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(26, 34, 102, 0.2);
+}
+.guide-card {
+  border-left: 4px solid var(--gold);
+  background: #fafbfe;
+  border-radius: 12px;
+  padding: 1.1rem;
+  margin-bottom: 1rem;
+}
+.guide-card h5 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 0.5rem;
+}
+.badge-custom {
+  font-size: 0.75rem;
+  padding: 0.28rem 0.6rem;
+  border-radius: 6px;
+  font-weight: 600;
+}
+.badge-partial {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+.badge-paid-pill {
+  background: #d1e7dd;
+  color: #0f5132;
+  border: 1px solid #badbcc;
+}
+.badge-due-pill {
+  background: #f8d7da;
+  color: #842029;
+  border: 1px solid #f5c2c7;
+}
+.stat-widget {
+  background: #fff;
+  border-radius: 14px;
+  padding: 1.1rem 1.25rem;
+  box-shadow: 0 4px 16px rgba(26, 34, 102, 0.06);
+  border: 1px solid #eaedf7;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.stat-widget:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(26, 34, 102, 0.1);
+}
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--gold-soft);
+  color: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+.stat-data .val {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--navy);
+  line-height: 1.15;
+}
+.stat-data .lbl {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* 80mm POS Thermal Receipt Preview & Print */
+#thermalReceiptModal .thermal-paper {
+  width: 80mm;
+  max-width: 100%;
+  margin: 0 auto;
+  background: #fff;
+  padding: 12px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 12px;
+  line-height: 1.3;
+  color: #000;
+  border: 1px dashed #ccc;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+@media print {
+  body.printing-thermal * {
+    visibility: hidden !important;
+  }
+  body.printing-thermal #thermalPrintArea,
+  body.printing-thermal #thermalPrintArea * {
+    visibility: visible !important;
+  }
+  body.printing-thermal #thermalPrintArea {
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 78mm !important;
+    margin: 0 !important;
+    padding: 2mm !important;
+    font-family: 'Courier New', Courier, monospace !important;
+    font-size: 11px !important;
+    color: #000 !important;
+    background: #fff !important;
+  }
+}
+
 </style>
 </head>
 
@@ -184,7 +346,12 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
         <div class="brand-meta">
           <span><i class="bi bi-person-badge-fill"></i>Salesman: <strong>Munesh </strong></span>
           <span><i class="bi bi-whatsapp"></i><a href="https://wa.me/923223968631" target="_blank" rel="noopener">+92 322 3968631</a></span>
-          <span id="dbBadge" class="badge rounded-pill bg-success-subtle text-success border border-success-subtle px-2 py-1"><i class="bi bi-database-check me-1"></i>MySQL Live</span>
+          <span id="dbBadge" class="badge rounded-pill bg-success-subtle text-success border border-success-subtle px-2 py-1" title="Connected to Hostinger MySQL Database (u468502783_aone_billing)">
+            <span class="live-dot"></span>MySQL Live
+          </span>
+          <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2 rounded-pill" id="btnShortcuts" title="Keyboard Shortcuts (Ctrl+S, Ctrl+P, Ctrl+N)">
+            <i class="bi bi-keyboard me-1"></i>Shortcuts
+          </button>
         </div>
       </div>
     </div>
@@ -198,7 +365,9 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
     <button type="button" class="app-tab active" id="tabNew" data-tab="new"><i class="bi bi-receipt-cutoff me-1"></i> New Bill</button>
     <button type="button" class="app-tab" id="tabSaved" data-tab="saved"><i class="bi bi-folder2-open me-1"></i> Saved Bills <span class="badge rounded-pill ms-1" id="savedCount">0</span></button>
     <button type="button" class="app-tab" id="tabProducts" data-tab="products"><i class="bi bi-box-seam me-1"></i> Products <span class="badge rounded-pill ms-1" id="productCount">0</span></button>
+    <button type="button" class="app-tab" id="tabCustomers" data-tab="customers"><i class="bi bi-people-fill me-1"></i> Customers Ledger</button>
     <button type="button" class="app-tab" id="tabReports" data-tab="reports"><i class="bi bi-calendar3 me-1"></i> Yearly Reports</button>
+    <button type="button" class="app-tab" id="tabBackup" data-tab="backup"><i class="bi bi-cloud-arrow-up-fill me-1"></i> Backup &amp; Import</button>
   </nav>
 
   <!-- ======================= NEW BILL ======================= -->
@@ -345,11 +514,13 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
 
         <!-- 4. Buttons -->
         <div class="row g-2 mt-3">
-          <div class="col-12 col-md-6 col-xl-3 d-grid"><button type="button" class="btn btn-navy btn-lg" id="btnPdf"><i class="bi bi-file-earmark-pdf-fill me-2" style="color:var(--gold)"></i>Generate PDF Bill</button></div>
-          <div class="col-12 col-md-6 col-xl-3 d-grid"><button type="button" class="btn btn-gold btn-lg" id="btnSave"><i class="bi bi-save2-fill me-2"></i>Save Bill</button></div>
-          <div class="col-12 col-md-6 col-xl-3 d-grid"><button type="button" class="btn btn-wa btn-lg" id="btnWhatsapp"><i class="bi bi-whatsapp me-2"></i>Send on WhatsApp</button></div>
-          <div class="col-12 col-md-6 col-xl-3 d-grid"><button type="button" class="btn btn-outline-navy btn-lg" id="btnNew"><i class="bi bi-arrow-counterclockwise me-2"></i>New Bill / Clear</button></div>
+          <div class="col-12 col-sm-6 col-xl-3 d-grid"><button type="button" class="btn btn-navy btn-lg" id="btnPdf"><i class="bi bi-file-earmark-pdf-fill me-2" style="color:var(--gold)"></i>PDF Bill (A4)</button></div>
+          <div class="col-12 col-sm-6 col-xl-3 d-grid"><button type="button" class="btn btn-gold btn-lg" id="btnSave"><i class="bi bi-save2-fill me-2"></i>Save Bill (MySQL)</button></div>
+          <div class="col-12 col-sm-6 col-xl-2 d-grid"><button type="button" class="btn btn-outline-navy btn-lg" id="btnReceipt"><i class="bi bi-printer me-2"></i>Receipt (80mm)</button></div>
+          <div class="col-12 col-sm-6 col-xl-2 d-grid"><button type="button" class="btn btn-wa btn-lg" id="btnWhatsapp"><i class="bi bi-whatsapp me-2"></i>WhatsApp</button></div>
+          <div class="col-12 col-sm-6 col-xl-2 d-grid"><button type="button" class="btn btn-outline-secondary btn-lg" id="btnNew"><i class="bi bi-plus-circle me-2"></i>New Bill</button></div>
         </div>
+        <div class="text-end mt-2"><small class="text-muted"><i class="bi bi-info-circle me-1"></i>Shortcuts: <kbd>Ctrl+S</kbd> Save | <kbd>Ctrl+P</kbd> PDF | <kbd>Ctrl+N</kbd> New</small></div>
       </div>
     </div>
   </section>
@@ -422,18 +593,45 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
     <!-- Daily / monthly summary -->
     <div class="row g-3 mb-3" id="statsRow"></div>
 
-    <div class="card card-soft">
+    <div class="card card-soft mb-3">
       <div class="card-body">
-        <div class="row g-2 align-items-center">
+        <div class="row g-2 align-items-center mb-3">
           <div class="col-12 col-lg">
             <div class="input-group">
               <span class="input-group-text bg-white" style="border-radius:12px 0 0 12px;border:1.5px solid #d9dcef;border-right:0"><i class="bi bi-search" style="color:var(--navy)"></i></span>
-              <input type="search" class="form-control" id="searchBox" placeholder="Search by customer name, phone or invoice no." autocomplete="off">
+              <input type="search" class="form-control" id="searchBox" placeholder="Search invoices by customer name, phone or invoice no..." autocomplete="off">
             </div>
           </div>
-          <div class="col-6 col-lg-auto d-grid"><button type="button" class="btn btn-outline-navy" id="btnExport"><i class="bi bi-download me-1"></i>Backup (JSON)</button></div>
-          <div class="col-6 col-lg-auto d-grid"><button type="button" class="btn btn-outline-navy" id="btnImport"><i class="bi bi-upload me-1"></i>Restore</button></div>
-          <input type="file" id="fileImport" accept=".json,application/json" class="d-none">
+          <div class="col-6 col-lg-auto d-grid">
+            <button type="button" class="btn btn-outline-navy" id="btnExportExcelBills" title="Export currently filtered bills to Excel spreadsheet">
+              <i class="bi bi-file-earmark-excel-fill me-1 text-success"></i> Export Excel
+            </button>
+          </div>
+          <div class="col-6 col-lg-auto d-grid">
+            <button type="button" class="btn btn-outline-navy" id="btnSavedImportBills" title="Bulk import past invoices from Excel / CSV">
+              <i class="bi bi-cloud-arrow-up-fill me-1" style="color:var(--gold)"></i> Import Invoices (Excel)
+            </button>
+            <input type="file" id="billsImportFile" accept=".xlsx,.xls,.csv" class="d-none">
+          </div>
+        </div>
+
+        <!-- Filter Pills Bar -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 pt-2 border-top">
+          <div class="filter-pills" id="billStatusFilters">
+            <span class="text-muted small fw-semibold me-1">Status:</span>
+            <div class="filter-pill active" data-filter="all">All Invoices</div>
+            <div class="filter-pill" data-filter="paid"><i class="bi bi-check-circle-fill text-success me-1"></i>Paid</div>
+            <div class="filter-pill" data-filter="due"><i class="bi bi-exclamation-circle-fill text-danger me-1"></i>Balance Due</div>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <span class="text-muted small fw-semibold">Period:</span>
+            <select id="billDateFilter" class="form-select form-select-sm" style="width:auto">
+              <option value="all">All Time</option>
+              <option value="today">Today</option>
+              <option value="yesterday">Yesterday</option>
+              <option value="this-month">This Month</option>
+            </select>
+          </div>
         </div>
       </div>
     </div>
@@ -478,6 +676,158 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
   </section>
 
   <div class="page-foot">A-One Trade &amp; Supply Network &middot; Salesman: Munesh  &middot; WhatsApp: +92 322 3968631</div>
+
+  <!-- ======================= CUSTOMERS LEDGER ======================= -->
+  <section id="paneCustomers" class="d-none animate-fade-up">
+    <!-- Customer Stats Widgets -->
+    <div class="row g-3 mb-3">
+      <div class="col-12 col-md-4">
+        <div class="stat-widget">
+          <div class="stat-icon"><i class="bi bi-people-fill"></i></div>
+          <div class="stat-data">
+            <div class="val" id="custTotalCount">0</div>
+            <div class="lbl">Total Customers</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="stat-widget">
+          <div class="stat-icon" style="background:#d1e7dd;color:#0f5132"><i class="bi bi-cash-stack"></i></div>
+          <div class="stat-data">
+            <div class="val text-success" id="custTotalReceived">Rs. 0</div>
+            <div class="lbl">Total Received</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="stat-widget">
+          <div class="stat-icon" style="background:#f8d7da;color:#842029"><i class="bi bi-exclamation-triangle-fill"></i></div>
+          <div class="stat-data">
+            <div class="val text-danger" id="custTotalBalance">Rs. 0</div>
+            <div class="lbl">Total Balance Due</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-soft">
+      <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-2">
+        <h2 class="card-title-text mb-0"><i class="bi bi-journal-bookmark-fill me-2" style="color:var(--gold)"></i>Customer Khata &amp; Balance Ledger</h2>
+        <div class="input-group" style="max-width:320px">
+          <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+          <input type="search" class="form-control form-control-sm" id="custLedgerSearch" placeholder="Filter customer name or phone...">
+        </div>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0" id="custLedgerTable">
+            <thead class="table-light">
+              <tr>
+                <th class="ps-3">Customer</th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th class="text-center">Bills</th>
+                <th class="text-end">Total Billed</th>
+                <th class="text-end">Paid Amount</th>
+                <th class="text-end">Balance Due</th>
+                <th class="text-center pe-3">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="custLedgerRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= BACKUP & IMPORT CENTER ======================= -->
+  <section id="paneBackup" class="d-none animate-fade-up">
+    <!-- Quick Action Cards -->
+    <div class="row g-3 mb-4">
+      <div class="col-12 col-lg-4">
+        <div class="card card-soft h-100">
+          <div class="card-header"><span class="step"><i class="bi bi-database-down"></i></span><h3 class="card-title-text">Full System Backup</h3></div>
+          <div class="card-body d-flex flex-column justify-content-between">
+            <p class="small text-muted mb-3">Download a complete snapshot of all bills, products, customers, and invoice counters from MySQL to your device as a JSON file.</p>
+            <div class="d-grid gap-2">
+              <button type="button" class="btn btn-navy" id="btnExportBackupMain"><i class="bi bi-cloud-arrow-down-fill me-1" style="color:var(--gold)"></i> Download Full Backup (.json)</button>
+              <button type="button" class="btn btn-outline-secondary btn-sm" id="btnSampleBackup"><i class="bi bi-file-code me-1"></i> Download Sample JSON</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-4">
+        <div class="card card-soft h-100">
+          <div class="card-header"><span class="step"><i class="bi bi-cloud-arrow-up"></i></span><h3 class="card-title-text">Restore to MySQL</h3></div>
+          <div class="card-body d-flex flex-column justify-content-between">
+            <p class="small text-muted mb-3">Upload an A-One backup JSON file to restore your entire database. Supports both <strong>Merge</strong> (safe update) and <strong>Replace All</strong>.</p>
+            <div class="d-grid gap-2">
+              <button type="button" class="btn btn-gold" id="btnImportBackupMain"><i class="bi bi-cloud-arrow-up-fill me-1"></i> Restore Database (.json)</button>
+              <input type="file" id="fileImportMain" accept=".json,application/json" class="d-none">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-4">
+        <div class="card card-soft h-100">
+          <div class="card-header"><span class="step"><i class="bi bi-file-earmark-spreadsheet"></i></span><h3 class="card-title-text">Excel &amp; CSV Bulk Import</h3></div>
+          <div class="card-body d-flex flex-column justify-content-between">
+            <p class="small text-muted mb-3">Quickly import hundreds of past invoices or your entire product list directly from Excel spreadsheets or CSV files into MySQL.</p>
+            <div class="d-grid gap-2">
+              <button type="button" class="btn btn-outline-navy" id="btnImportInvoicesExcel"><i class="bi bi-receipt me-1"></i> Import Bills (.xlsx / .csv)</button>
+              <button type="button" class="btn btn-outline-navy" id="btnImportProductsExcel"><i class="bi bi-box-seam me-1"></i> Import Products (.xlsx / .csv)</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Import Guide & Schema Specification -->
+    <div class="card card-soft">
+      <div class="card-header"><span class="step"><i class="bi bi-info-circle-fill"></i></span><h3 class="card-title-text">Data Import &amp; Template Guide (ڈیٹا امپورٹ کا مکمل طریقہ کار)</h3></div>
+      <div class="card-body">
+        <div class="row g-4">
+          <div class="col-12 col-lg-6">
+            <div class="guide-card">
+              <h5><i class="bi bi-file-earmark-spreadsheet-fill text-success me-2"></i>1. Invoices Excel Import (.xlsx / .csv)</h5>
+              <p class="small text-muted mb-2">اگر آپ کے پاس ایکسل میں بل موجود ہیں تو نیچے دیے گئے بٹن سے ٹیمپلیٹ ڈاؤن لوڈ کریں اور اسی فارمیٹ میں کالمز بھریں:</p>
+              <ul class="small mb-3 ps-3">
+                <li><strong>Invoice No</strong> (مثلاً INV-1001) - اگر ایک بل میں 3 پروڈکٹس ہیں تو تینوں لائنوں میں یہی Invoice No لکھیں۔ وہ خودکار ایک ہی بل بن جائیں گی۔</li>
+                <li><strong>Date</strong> (مثلاً 2026-11-20)</li>
+                <li><strong>Customer Name &amp; Phone</strong> (کسٹمر کا نام اور موبائل نمبر)</li>
+                <li><strong>Customer Address</strong> (پتہ یا شہر کا نام)</li>
+                <li><strong>Item Name, Quantity, Price</strong> (پروڈکٹ کا نام، مقدار، اور ریٹ)</li>
+                <li><strong>Discount &amp; Discount Type</strong> (ڈسکاؤنٹ رقم یا فیصد)</li>
+                <li><strong>Bill Discount, Charges, Received</strong> (بل کا کل ڈسکاؤنٹ، کرایہ، اور موصول شدہ کیش)</li>
+              </ul>
+              <button type="button" class="btn btn-sm btn-outline-success" id="btnDownloadInvoiceTemplate">
+                <i class="bi bi-download me-1"></i> Download Invoices Template (.xlsx)
+              </button>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-6">
+            <div class="guide-card" style="border-left-color:var(--navy)">
+              <h5><i class="bi bi-box-seam-fill text-primary me-2"></i>2. Products Catalog Import (.xlsx / .csv)</h5>
+              <p class="small text-muted mb-2">اپنی دکان کے تمام پروڈکٹس اور ریٹس ایک ساتھ ایکسل سے امپورٹ کریں:</p>
+              <ul class="small mb-3 ps-3">
+                <li><strong>Product Name</strong> (لازمی: آئٹم کا نام جیسے PVC Pipe 1 inch)</li>
+                <li><strong>Selling Price</strong> (لازمی: فروخت کی قیمت جیسے 450)</li>
+                <li><strong>Unit</strong> (اختیاری: Pcs, Kg, Box, Pkt, Dozen, Mtr)</li>
+                <li><strong>Category</strong> (اختیاری: جیسے Sanitary, Hardware)</li>
+              </ul>
+              <button type="button" class="btn btn-sm btn-outline-primary" id="btnDownloadProductTemplateExcel">
+                <i class="bi bi-download me-1"></i> Download Products Template (.xlsx)
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <div id="toasts" role="status" aria-live="polite"></div>
@@ -649,13 +999,39 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
       }
       return null;
     },
+    async bulkImportBills(bills) {
+      try {
+        var r = await fetch(API_BASE + '/api/bills/bulk', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ bills: bills })
+        });
+        if (!r.ok) {
+          var errD = await r.json().catch(function () { return {}; });
+          throw new Error(errD.message || ('Server error HTTP ' + r.status));
+        }
+        updateDbBadge(true);
+        return await r.json();
+      } catch (e) {
+        return { success: false, message: e.message };
+      }
+    },
     async restoreBackup(data, mode) {
-      var r = await fetch(API_BASE + '/api/backup/restore?mode=' + encodeURIComponent(mode), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-      return await r.json();
+      try {
+        var r = await fetch(API_BASE + '/api/backup/restore?mode=' + encodeURIComponent(mode), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        if (!r.ok) {
+          var errD = await r.json().catch(function () { return {}; });
+          throw new Error(errD.message || ('Server error HTTP ' + r.status));
+        }
+        updateDbBadge(true);
+        return await r.json();
+      } catch (e) {
+        return { success: false, message: e.message };
+      }
     }
   };
 
@@ -1721,36 +2097,85 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
     }).join('') : '<tr><td colspan="4" class="text-center text-muted py-4">No saved bills found for ' + esc(year) + '.</td></tr>';
   }
 
+  var billStatusFilter = 'all';
+  var billDateFilter = 'all';
+
   async function renderSaved() {
-    var q = $('#searchBox').value.trim();
+    var q = ($('#searchBox').value || '').trim();
     var list = await api.getBills(q);
     if (!list) list = loadBills();
     else { dbBills = list; store.set(K.bills, list); }
     renderStats(list);
 
+    // Apply client-side filters
+    var filtered = list.filter(function (b) {
+      if (billStatusFilter === 'paid' && b.balance > 0.004) return false;
+      if (billStatusFilter === 'due' && b.balance <= 0.004) return false;
+
+      var today = todayISO();
+      if (billDateFilter === 'today' && b.date !== today) return false;
+      if (billDateFilter === 'yesterday') {
+        var yest = new Date(Date.now() - 86400000);
+        var yestIso = yest.getFullYear() + '-' + pad(yest.getMonth() + 1) + '-' + pad(yest.getDate());
+        if (b.date !== yestIso) return false;
+      }
+      if (billDateFilter === 'this-month' && (b.date || '').slice(0, 7) !== today.slice(0, 7)) return false;
+
+      return true;
+    });
+
     var el = $('#billsList');
-    if (!list.length) {
+    if (!filtered.length) {
       el.innerHTML = '<div class="empty-state card card-soft py-5"><i class="bi bi-folder2-open"></i>' +
-        (loadBills().length ? 'No bills match your search.' : 'No saved bills yet. Create a bill and press <strong>Save Bill</strong>.') + '</div>';
+        (list.length ? 'No invoices match the selected status or date filters.' : 'No saved bills yet. Create a bill and press <strong>Save Bill</strong>.') + '</div>';
       return;
     }
-    el.innerHTML = list.map(function (b) {
+
+    el.innerHTML = filtered.map(function (b) {
       var paid = b.balance <= 0.004;
+      var partial = !paid && (Number(b.received) > 0);
+      var badgeHtml = paid
+        ? '<span class="badge-custom badge-paid-pill"><i class="bi bi-check-circle-fill me-1"></i>Paid</span>'
+        : (partial
+          ? '<span class="badge-custom badge-partial"><i class="bi bi-pie-chart-fill me-1"></i>Due ' + esc(rs(b.balance)) + '</span>'
+          : '<span class="badge-custom badge-due-pill"><i class="bi bi-exclamation-circle-fill me-1"></i>Due ' + esc(rs(b.balance)) + '</span>');
+
       return '<div class="bill-row" data-id="' + esc(b.id) + '">' +
-        '<div><div class="bill-inv">' + esc(b.invoiceNo) + '</div><div class="small text-muted">' + esc(fmtDate(b.date)) + '</div></div>' +
-        '<div class="bill-cust"><div class="fw-semibold">' + esc(b.customer.name) + '</div><div class="small text-muted">' + esc(b.customer.phone) + '</div></div>' +
-        '<div class="bill-total"><span class="price">' + esc(rs(b.grandTotal)) + '</span>' +
-          (paid ? '<span class="badge-paid">Paid</span>' : '<span class="badge-due">Due ' + esc(rs(b.balance)) + '</span>') + '</div>' +
+        '<div><div class="bill-inv">' + esc(b.invoiceNo) + '</div><div class="small text-muted"><i class="bi bi-calendar3 me-1"></i>' + esc(fmtDate(b.date)) + '</div></div>' +
+        '<div class="bill-cust"><div class="fw-semibold">' + esc(b.customer.name) + '</div><div class="small text-muted"><i class="bi bi-telephone me-1"></i>' + esc(b.customer.phone) + '</div></div>' +
+        '<div class="bill-total"><span class="price">' + esc(rs(b.grandTotal)) + '</span>' + badgeHtml + '</div>' +
         '<div class="bill-actions">' +
-          '<button type="button" class="btn btn-sm btn-navy" data-act="edit" title="View / Edit"><i class="bi bi-pencil-square"></i><span class="ms-1">View/Edit</span></button>' +
-          '<button type="button" class="btn btn-sm btn-outline-navy" data-act="pdf" title="Re-print PDF"><i class="bi bi-file-earmark-pdf-fill"></i><span class="ms-1">PDF</span></button>' +
-          '<button type="button" class="btn btn-sm btn-wa" data-act="wa" title="Send on WhatsApp"><i class="bi bi-whatsapp"></i></button>' +
-          '<button type="button" class="btn btn-sm btn-outline-danger" data-act="del" title="Delete"><i class="bi bi-trash3-fill"></i></button>' +
+          '<button type="button" class="btn btn-sm btn-navy" data-act="edit" title="View & Edit Invoice"><i class="bi bi-pencil-square"></i><span class="ms-1 d-none d-md-inline">Edit</span></button>' +
+          '<button type="button" class="btn btn-sm btn-outline-secondary" data-act="clone" title="Duplicate Bill with New Invoice Number"><i class="bi bi-copy"></i><span class="ms-1 d-none d-md-inline">Clone</span></button>' +
+          '<button type="button" class="btn btn-sm btn-outline-navy" data-act="pdf" title="Generate Vector A4 PDF"><i class="bi bi-file-earmark-pdf-fill" style="color:var(--gold)"></i><span class="ms-1 d-none d-md-inline">PDF</span></button>' +
+          '<button type="button" class="btn btn-sm btn-outline-dark" data-act="receipt" title="Print 80mm Thermal POS Receipt"><i class="bi bi-printer"></i><span class="ms-1 d-none d-md-inline">POS</span></button>' +
+          '<button type="button" class="btn btn-sm btn-wa" data-act="wa" title="Send Bill on WhatsApp"><i class="bi bi-whatsapp"></i></button>' +
+          '<button type="button" class="btn btn-sm btn-outline-danger" data-act="del" title="Delete from MySQL"><i class="bi bi-trash3-fill"></i></button>' +
         '</div></div>';
     }).join('');
   }
 
   function findBill(id) { return loadBills().filter(function (b) { return b.id === id; })[0]; }
+
+  function cloneBill(b) {
+    state = {
+      invoiceNo: nextInvoiceNo(),
+      editingId: null,
+      createdAt: Date.now(),
+      date: todayISO(),
+      customer: { name: b.customer.name, address: b.customer.address, phone: b.customer.phone },
+      items: b.items.map(function (it) { return { name: it.name, qty: it.qty, price: it.price, disc: it.disc, discType: it.discType }; }),
+      discType: b.discType,
+      discValue: b.discValue,
+      charges: b.charges,
+      received: 0
+    };
+    dirty = true;
+    syncFormFromState();
+    showTab('new');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    toast('Bill cloned as ' + state.invoiceNo + '! Review items and press Save Bill.', 'success', 5000);
+  }
 
   function onBillsClick(e) {
     var btn = e.target.closest('button[data-act]'); if (!btn) return;
@@ -1761,8 +2186,13 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
       if (dirty && hasContent()) {
         confirmDialog('Open this bill?', 'Your current bill has unsaved changes. They will be discarded.', 'Discard & open', true).then(function (ok) { if (ok) loadBillIntoForm(b); });
       } else loadBillIntoForm(b);
-    } else if (act === 'pdf') deliverPDF(b);
-    else if (act === 'wa') whatsappFor(b);
+    } else if (act === 'clone') {
+      cloneBill(b);
+    } else if (act === 'pdf') {
+      deliverPDF(b);
+    } else if (act === 'receipt') {
+      deliverThermalReceipt(b);
+    } else if (act === 'wa') whatsappFor(b);
     else if (act === 'del') {
       confirmDialog('Delete bill ' + b.invoiceNo + '?', 'This will permanently delete the bill for ' + b.customer.name + ' from MySQL. This cannot be undone.', 'Delete', true).then(async function (ok) {
         if (!ok) return;
@@ -1778,6 +2208,80 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
         refreshSavedCount(); renderSaved();
       });
     }
+  }
+
+  
+  /* ------------------------------------------------------------
+     14.1. 80MM POS THERMAL RECEIPT ENGINE
+     ------------------------------------------------------------ */
+  function deliverThermalReceipt(bill) {
+    var c = calc(bill);
+    var dateFormatted = fmtDate(bill.date);
+    var itemsRows = bill.items.map(function (it, idx) {
+      var ln = c.lines[idx] || { net: it.qty * it.price };
+      return '<tr>' +
+        '<td style="padding:2px 0;">' + esc(it.name) + '<br><small style="color:#555">' + it.qty + ' x ' + rs(it.price) + (it.disc ? ' (Disc: ' + it.disc + (it.discType === 'pct' ? '%' : 'Rs') + ')' : '') + '</small></td>' +
+        '<td style="text-align:right;vertical-align:bottom;padding:2px 0;">' + rs(ln.net) + '</td>' +
+      '</tr>';
+    }).join('');
+
+    var receiptHtml =
+      '<div id="thermalReceiptBox" class="thermal-paper">' +
+        '<div style="text-align:center;margin-bottom:8px;">' +
+          '<div style="font-size:16px;font-weight:bold;letter-spacing:0.5px;">A-ONE TRADE & SUPPLY NETWORK</div>' +
+          '<div style="font-size:11px;">Chishtian, Bahawalnagar Road</div>' +
+          '<div style="font-size:11px;">WhatsApp: +92 322 3968631</div>' +
+          '<div style="margin:4px 0;border-top:1px dashed #000;"></div>' +
+          '<div style="font-weight:bold;font-size:13px;">INVOICE: ' + esc(bill.invoiceNo) + '</div>' +
+          '<div style="font-size:11px;">Date: ' + esc(dateFormatted) + '</div>' +
+        '</div>' +
+        '<div style="margin-bottom:6px;font-size:11px;">' +
+          '<div><strong>Customer:</strong> ' + esc(bill.customer.name) + '</div>' +
+          (bill.customer.phone ? '<div><strong>Phone:</strong> ' + esc(bill.customer.phone) + '</div>' : '') +
+          (bill.customer.address ? '<div><strong>Address:</strong> ' + esc(bill.customer.address) + '</div>' : '') +
+        '</div>' +
+        '<div style="border-top:1px dashed #000;margin:4px 0;"></div>' +
+        '<table style="width:100%;font-size:11px;border-collapse:collapse;">' +
+          '<thead><tr style="border-bottom:1px solid #000;"><th style="text-align:left;padding:2px 0;">Item</th><th style="text-align:right;padding:2px 0;">Total</th></tr></thead>' +
+          '<tbody>' + itemsRows + '</tbody>' +
+        '</table>' +
+        '<div style="border-top:1px dashed #000;margin:6px 0;"></div>' +
+        '<table style="width:100%;font-size:11px;line-height:1.4;">' +
+          '<tr><td>Subtotal:</td><td style="text-align:right;">' + rs(c.subtotal) + '</td></tr>' +
+          (c.discountAmt ? '<tr><td>Discount:</td><td style="text-align:right;">- ' + rs(c.discountAmt) + '</td></tr>' : '') +
+          (bill.charges ? '<tr><td>Delivery/Charges:</td><td style="text-align:right;">' + rs(bill.charges) + '</td></tr>' : '') +
+          '<tr style="font-weight:bold;font-size:13px;border-top:1px solid #000;"><td style="padding-top:3px;">Grand Total:</td><td style="text-align:right;padding-top:3px;">' + rs(c.grand) + '</td></tr>' +
+          '<tr><td>Amount Received:</td><td style="text-align:right;">' + rs(bill.received) + '</td></tr>' +
+          '<tr style="font-weight:bold;"><td>Balance Due:</td><td style="text-align:right;">' + rs(c.balance) + '</td></tr>' +
+        '</table>' +
+        '<div style="border-top:1px dashed #000;margin:8px 0;"></div>' +
+        '<div style="text-align:center;font-size:11px;">' +
+          '<div>Thank you for your business!</div>' +
+          '<div style="margin-top:2px;">Software: A-One Trade System</div>' +
+        '</div>' +
+      '</div>';
+
+    function printReceipt() {
+      var printArea = $('#thermalPrintArea');
+      printArea.innerHTML = $('#thermalReceiptBox').innerHTML;
+      document.body.classList.add('printing-thermal');
+      window.print();
+      setTimeout(function () {
+        document.body.classList.remove('printing-thermal');
+        printArea.innerHTML = '';
+      }, 1000);
+    }
+
+    showModal({
+      title: 'POS Thermal Receipt (80mm) - ' + bill.invoiceNo,
+      icon: 'bi-printer-fill',
+      body: receiptHtml,
+      actions: [
+        { label: 'Close', cls: 'btn-outline-secondary' },
+        { label: 'WhatsApp', cls: 'btn-wa', onClick: function () { whatsappFor(bill); } },
+        { label: 'Print 80mm Receipt', cls: 'btn-navy', keep: true, onClick: printReceipt }
+      ]
+    });
   }
 
   /* ------------------------------------------------------------
@@ -1913,6 +2417,316 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
     renderProducts();
   }
 
+  
+  /* ------------------------------------------------------------
+     15.1. EXCEL EXPORT & BULK BILLS IMPORT
+     ------------------------------------------------------------ */
+  function exportFilteredBillsExcel() {
+    var q = ($('#searchBox').value || '').trim();
+    var list = loadBills();
+    if (!list.length) { toast('No saved bills to export.', 'warning'); return; }
+
+    var rows = list.map(function (b) {
+      return {
+        'Invoice No': b.invoiceNo,
+        'Date': b.date,
+        'Customer Name': b.customer.name,
+        'Customer Phone': b.customer.phone,
+        'Customer Address': b.customer.address,
+        'Items Count': b.items ? b.items.length : 0,
+        'Subtotal (Rs)': b.subtotal,
+        'Discount (Rs)': b.discountAmt,
+        'Charges (Rs)': b.charges,
+        'Grand Total (Rs)': b.grandTotal,
+        'Received (Rs)': b.received,
+        'Balance Due (Rs)': b.balance,
+        'Status': b.balance <= 0.004 ? 'Paid' : 'Due'
+      };
+    });
+
+    if (window.XLSX) {
+      var ws = XLSX.utils.json_to_sheet(rows);
+      var wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Invoices');
+      XLSX.writeFile(wb, 'A-One-Invoices-Export-' + todayISO() + '.xlsx');
+      toast('Invoices spreadsheet exported successfully!', 'success');
+    } else {
+      toast('Excel library loading, try again in a moment.', 'warning');
+    }
+  }
+
+  function downloadInvoiceTemplate() {
+    if (!window.XLSX) { toast('Excel engine loading...', 'info'); return; }
+    var sampleRows = [
+      {
+        'Invoice No': 'INV-2001', 'Date': todayISO(), 'Customer Name': 'Ali Khan', 'Customer Phone': '03211234567',
+        'Customer Address': 'Chishtian', 'Item Name': 'PVC Pipe 1 inch', 'Quantity': 10, 'Price': 450,
+        'Discount': 5, 'Discount Type': '%', 'Bill Discount': 100, 'Charges': 200, 'Received': 4000
+      },
+      {
+        'Invoice No': 'INV-2001', 'Date': todayISO(), 'Customer Name': 'Ali Khan', 'Customer Phone': '03211234567',
+        'Customer Address': 'Chishtian', 'Item Name': 'Brass Elbow 1/2', 'Quantity': 4, 'Price': 250,
+        'Discount': 0, 'Discount Type': 'Rs', 'Bill Discount': 100, 'Charges': 200, 'Received': 4000
+      },
+      {
+        'Invoice No': 'INV-2002', 'Date': todayISO(), 'Customer Name': 'Usman Hardware', 'Customer Phone': '03009876543',
+        'Customer Address': 'Bahawalnagar', 'Item Name': 'Water Tank 500L', 'Quantity': 1, 'Price': 12500,
+        'Discount': 500, 'Discount Type': 'Rs', 'Bill Discount': 0, 'Charges': 500, 'Received': 12500
+      }
+    ];
+    var ws = XLSX.utils.json_to_sheet(sampleRows);
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sample Invoices');
+    XLSX.writeFile(wb, 'A-One-Invoices-Template.xlsx');
+    toast('Downloaded A-One-Invoices-Template.xlsx', 'success');
+  }
+
+  function downloadProductTemplateExcel() {
+    if (!window.XLSX) { toast('Excel engine loading...', 'info'); return; }
+    var sampleProducts = [
+      { 'Product Name': 'PVC Pipe 1 inch (Master)', 'Selling Price': 450, 'Unit': 'Pcs', 'Category': 'Pipes' },
+      { 'Product Name': 'PVC Socket 1 inch', 'Selling Price': 45, 'Unit': 'Pcs', 'Category': 'Fittings' },
+      { 'Product Name': 'Brass Ball Valve 1/2', 'Selling Price': 850, 'Unit': 'Pcs', 'Category': 'Valves' },
+      { 'Product Name': 'Water Tank 500L (Super Golden)', 'Selling Price': 12500, 'Unit': 'Unit', 'Category': 'Tanks' }
+    ];
+    var ws = XLSX.utils.json_to_sheet(sampleProducts);
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Products');
+    XLSX.writeFile(wb, 'A-One-Products-Template.xlsx');
+    toast('Downloaded A-One-Products-Template.xlsx', 'success');
+  }
+
+  function downloadSampleBackup() {
+    var sampleBackup = {
+      app: 'aone-billing',
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      counter: 1010,
+      bills: [
+        {
+          id: 'b_sample1',
+          invoiceNo: 'INV-1001',
+          date: todayISO(),
+          customer: { name: 'Muhammad Ali', phone: '03223968631', address: 'Chishtian' },
+          items: [
+            { name: 'PVC Pipe 1 inch', qty: 10, price: 450, disc: 5, discType: 'pct' },
+            { name: 'Brass Valve 1/2', qty: 2, price: 850, disc: 0, discType: 'rs' }
+          ],
+          discType: 'rs', discValue: 100, charges: 150, received: 5000
+        }
+      ],
+      products: [
+        { name: 'PVC Pipe 1 inch', price: 450 },
+        { name: 'Brass Valve 1/2', price: 850 }
+      ],
+      customers: [
+        { name: 'Muhammad Ali', phone: '03223968631', address: 'Chishtian' }
+      ]
+    };
+    downloadBlob(new Blob([JSON.stringify(sampleBackup, null, 2)], { type: 'application/json' }), 'A-One-Sample-Backup.json');
+    toast('Sample JSON backup downloaded!', 'success');
+  }
+
+  function importBillsFile(file) {
+    var reader = new FileReader();
+    reader.onerror = function () { toast('Could not read that file.', 'danger'); };
+    reader.onload = async function (e) {
+      try {
+        var data = e.target.result;
+        var wb = XLSX.read(data, { type: 'binary', cellDates: true });
+        var firstSheet = wb.SheetNames[0];
+        var rows = XLSX.utils.sheet_to_json(wb.Sheets[firstSheet], { defval: '' });
+
+        if (!rows.length) {
+          toast('The spreadsheet contains no data rows.', 'warning');
+          return;
+        }
+
+        // Group rows by Invoice No
+        var billsMap = {};
+        rows.forEach(function (r) {
+          var invNo = String(r['Invoice No'] || r['Invoice'] || r['InvoiceNo'] || r['Bill No'] || r['BillNo'] || '').trim();
+          if (!invNo) invNo = 'INV-' + todayISO().replace(/-/g, '') + '-' + Math.floor(Math.random() * 900 + 100);
+
+          if (!billsMap[invNo]) {
+            var rawDate = r['Date'] || r['Bill Date'] || r['Invoice Date'] || '';
+            var isoDate = todayISO();
+            if (rawDate instanceof Date && !isNaN(rawDate)) {
+              isoDate = rawDate.getFullYear() + '-' + pad(rawDate.getMonth() + 1) + '-' + pad(rawDate.getDate());
+            } else if (/^\d{4}-\d{2}-\d{2}$/.test(String(rawDate))) {
+              isoDate = String(rawDate);
+            }
+
+            billsMap[invNo] = {
+              id: uid(),
+              invoiceNo: invNo,
+              date: isoDate,
+              customer: {
+                name: String(r['Customer Name'] || r['Customer'] || r['Party Name'] || 'Walk-in Customer').trim(),
+                phone: String(r['Customer Phone'] || r['Phone'] || r['Mobile'] || '').trim(),
+                address: String(r['Customer Address'] || r['Address'] || '').trim()
+              },
+              items: [],
+              discType: String(r['Discount Type'] || '').includes('%') ? 'pct' : 'rs',
+              discValue: num(r['Bill Discount'] || r['Total Discount'] || 0),
+              charges: num(r['Charges'] || r['Delivery Charges'] || 0),
+              received: num(r['Received'] || r['Paid'] || 0),
+              createdAt: Date.now(),
+              updatedAt: Date.now()
+            };
+          }
+
+          var itemName = String(r['Item Name'] || r['Product Name'] || r['Item'] || r['Product'] || '').trim();
+          var itemQty = num(r['Quantity'] || r['Qty'] || 1);
+          var itemPrice = num(r['Price'] || r['Rate'] || r['Selling Price'] || 0);
+          var itemDisc = num(r['Discount'] || r['Item Discount'] || 0);
+          var itemDiscType = String(r['Item Discount Type'] || '').includes('%') ? 'pct' : 'rs';
+
+          if (itemName && itemQty > 0) {
+            billsMap[invNo].items.push({
+              name: itemName,
+              qty: itemQty,
+              price: itemPrice,
+              disc: itemDisc,
+              discType: itemDiscType
+            });
+          }
+        });
+
+        var billsToImport = Object.values(billsMap).map(normalizeBill).filter(Boolean);
+        if (!billsToImport.length) {
+          toast('No valid invoices could be constructed from that sheet.', 'warning');
+          return;
+        }
+
+        showModal({
+          title: 'Import ' + billsToImport.length + ' Invoices to MySQL',
+          icon: 'bi-cloud-arrow-up-fill',
+          body: '<div class="alert alert-info py-2 px-3 small mb-2"><i class="bi bi-info-circle me-1"></i>Found <strong>' + billsToImport.length + '</strong> invoices with <strong>' + rows.length + '</strong> line items in this file.</div>' +
+                '<p class="small text-muted mb-0">These invoices will be bulk-saved directly to your Hostinger MySQL database, customers will be updated, and invoice counters will be refreshed.</p>',
+          actions: [
+            { label: 'Cancel', cls: 'btn-outline-secondary' },
+            {
+              label: 'Import Invoices', cls: 'btn-navy',
+              onClick: async function () {
+                toast('Uploading and importing ' + billsToImport.length + ' invoices to MySQL...', 'info', 5000);
+                try {
+                  var res = await api.bulkImportBills(billsToImport);
+                  if (!res || !res.success) throw new Error((res && res.message) || 'Bulk import failed');
+                  toast(res.message || 'Invoices imported successfully!', 'success', 6000);
+                  await syncAllData();
+                  showTab('saved');
+                } catch (err) {
+                  toast('Import error: ' + err.message, 'danger', 7000);
+                }
+              }
+            }
+          ]
+        });
+      } catch (err) {
+        toast('Failed to parse Excel file: ' + err.message, 'danger', 6000);
+      }
+    };
+    reader.readAsBinaryString(file);
+  }
+
+  /* ------------------------------------------------------------
+     15.2. CUSTOMERS KHATA & BALANCE LEDGER
+     ------------------------------------------------------------ */
+  function renderCustomersLedger() {
+    var bills = loadBills();
+    var q = ($('#custLedgerSearch').value || '').trim().toLowerCase();
+
+    var ledger = {};
+    bills.forEach(function (b) {
+      var phone = (b.customer && b.customer.phone) || '';
+      var name = (b.customer && b.customer.name) || 'Walk-in Customer';
+      var key = phone ? phone : name.toLowerCase();
+
+      if (!ledger[key]) {
+        ledger[key] = {
+          name: name,
+          phone: phone,
+          address: (b.customer && b.customer.address) || '',
+          count: 0,
+          total: 0,
+          received: 0,
+          balance: 0,
+          lastDate: b.date
+        };
+      }
+      ledger[key].count++;
+      ledger[key].total += Number(b.grandTotal) || 0;
+      ledger[key].received += Number(b.received) || 0;
+      ledger[key].balance += Number(b.balance) || 0;
+      if (b.date > ledger[key].lastDate) ledger[key].lastDate = b.date;
+    });
+
+    var list = Object.values(ledger).sort(function (a, b) {
+      return b.balance - a.balance || b.total - a.total;
+    });
+
+    // Update stats widgets
+    var totalReceivable = 0;
+    var totalReceivedAll = 0;
+    list.forEach(function (c) {
+      totalReceivable += (c.balance > 0 ? c.balance : 0);
+      totalReceivedAll += c.received;
+    });
+
+    $('#custTotalCount').textContent = list.length;
+    $('#custTotalReceived').textContent = rs(totalReceivedAll);
+    $('#custTotalBalance').textContent = rs(totalReceivable);
+
+    var filtered = list.filter(function (c) {
+      if (!q) return true;
+      return c.name.toLowerCase().includes(q) || c.phone.includes(q) || c.address.toLowerCase().includes(q);
+    });
+
+    var rowsHtml = filtered.map(function (c) {
+      var isClear = c.balance <= 0.004;
+      var balanceBadge = isClear
+        ? '<span class="badge-custom badge-paid-pill"><i class="bi bi-check-circle me-1"></i>Cleared</span>'
+        : '<span class="badge-custom badge-due-pill fw-bold"><i class="bi bi-exclamation-circle me-1"></i>' + esc(rs(c.balance)) + '</span>';
+
+      return '<tr>' +
+        '<td class="ps-3"><div class="fw-bold text-navy" style="color:var(--navy)">' + esc(c.name) + '</div><small class="text-muted">Last bill: ' + esc(fmtDate(c.lastDate)) + '</small></td>' +
+        '<td>' + (c.phone ? '<a href="tel:' + esc(c.phone) + '" class="text-decoration-none text-muted"><i class="bi bi-telephone me-1"></i>' + esc(c.phone) + '</a>' : '<span class="text-muted">—</span>') + '</td>' +
+        '<td><small class="text-muted">' + esc(c.address || '—') + '</small></td>' +
+        '<td class="text-center"><span class="badge bg-light text-dark border">' + c.count + '</span></td>' +
+        '<td class="text-end fw-semibold">' + rs(c.total) + '</td>' +
+        '<td class="text-end text-success">' + rs(c.received) + '</td>' +
+        '<td class="text-end">' + balanceBadge + '</td>' +
+        '<td class="text-center pe-3">' +
+          '<div class="btn-group btn-group-sm">' +
+            (c.phone && !isClear
+              ? '<button type="button" class="btn btn-wa btn-sm send-reminder-btn" data-phone="' + esc(c.phone) + '" data-name="' + esc(c.name) + '" data-due="' + esc(rs(c.balance)) + '" title="Send WhatsApp Balance Reminder"><i class="bi bi-whatsapp"></i></button>'
+              : '') +
+            '<button type="button" class="btn btn-outline-navy btn-sm filter-cust-bills-btn" data-phone="' + esc(c.phone || c.name) + '" title="View Customer Invoices"><i class="bi bi-folder2-open"></i></button>' +
+          '</div>' +
+        '</td>' +
+      '</tr>';
+    }).join('');
+
+    $('#custLedgerRows').innerHTML = rowsHtml || '<tr><td colspan="8" class="text-center text-muted py-4">No customer records found matching filter.</td></tr>';
+  }
+
+  function sendCustomerWhatsAppReminder(name, phone, dueStr) {
+    var cleanPhone = phoneDigits(phone);
+    if (!cleanPhone) { toast('No phone number for this customer.', 'warning'); return; }
+    if (cleanPhone.length === 10 && cleanPhone[0] === '3') cleanPhone = '92' + cleanPhone;
+    else if (cleanPhone.length === 11 && cleanPhone[0] === '0') cleanPhone = '92' + cleanPhone.slice(1);
+
+    var text = 'السلام علیکم ' + name + ' صاحب!\n' +
+      'A-One Trade & Supply Network کی طرف سے اطلاع ہے کہ آپ کا بقایا واجب الادا بیلنس: *' + dueStr + '* ہے۔\n' +
+      'برائے مہربانی جلد از جلد ادائیگی فرمائیں۔\n\n' +
+      'شکریہ!\n' +
+      '*A-One Trade & Supply Network*\n' +
+      '📞 +92 322 3968631';
+
+    window.open('https://wa.me/' + cleanPhone + '?text=' + encodeURIComponent(text), '_blank');
+  }
+
   /* ------------------------------------------------------------
      16. BACKUP / RESTORE
      ------------------------------------------------------------ */
@@ -1944,7 +2758,7 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
   function importBackup(file) {
     var reader = new FileReader();
     reader.onerror = function () { toast('Could not read that file.', 'danger'); };
-    reader.onload = function () {
+    reader.onload = async function () {
       var data;
       try { data = JSON.parse(reader.result); } catch (e) { toast('That file is not a valid backup (JSON error).', 'danger', 5000); return; }
       var rawBills = Array.isArray(data) ? data : (data && Array.isArray(data.bills) ? data.bills : []);
@@ -1959,23 +2773,35 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
         toast('No valid bills, products or customers were found in that file.', 'warning', 5000); return;
       }
 
-      function apply(mode) {
+      async function apply(mode) {
+        toast('Restoring data to MySQL database... please wait.', 'info', 4000);
+        try {
+          var res = await api.restoreBackup(data, mode);
+          if (res && res.success) {
+            toast(res.message || 'Data successfully restored to MySQL database!', 'success', 6000);
+          } else {
+            throw new Error((res && res.message) || 'Backend restore failed');
+          }
+        } catch (backendErr) {
+          console.warn('MySQL restore fallback to local storage:', backendErr.message);
+          toast('Warning: Could not sync to MySQL (' + backendErr.message + '). Data restored in local browser storage.', 'warning', 7000);
+        }
+
+        // Always update local cache and memory as well
         var cur = mode === 'replace' ? [] : loadBills();
         var added = 0, updated = 0;
         bills.forEach(function (nb) {
           var idx = -1;
-          for (var i = 0; i < cur.length; i++) { if (cur[i].id === nb.id) { idx = i; break; } }
+          for (var i = 0; i < cur.length; i++) { if (cur[i].id === nb.id || cur[i].invoiceNo === nb.invoiceNo) { idx = i; break; } }
           if (idx === -1) { cur.push(nb); added++; }
-          else if ((nb.updatedAt || 0) > (cur[idx].updatedAt || 0)) { cur[idx] = nb; updated++; }
+          else if ((nb.updatedAt || 0) >= (cur[idx].updatedAt || 0)) { cur[idx] = nb; updated++; }
         });
         saveBills(cur);
 
-        // Products are restored into the existing aone.products.v1 key.
         if (!Array.isArray(data) && Array.isArray(data.products)) {
           if (mode === 'replace') store.set(K.products, products.slice());
           else products.forEach(function (p) { saveProductRecord(p, 'update'); });
         }
-        // Merge remembered customers as before; Replace starts from the backup customer list.
         if (!Array.isArray(data)) {
           if (mode === 'replace' && Array.isArray(data.customers)) store.set(K.customers, []);
           rawCustomers.forEach(function (c) {
@@ -1987,18 +2813,23 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
         if (data && data.counter) mx = Math.max(mx, Number(data.counter) || 0);
         store.set(K.counter, mx);
         if (!state.editingId && !dirty) { state.invoiceNo = nextInvoiceNo(); $('#invNo').value = state.invoiceNo; }
-        refreshSavedCount(); renderSaved(); renderProducts();
-        toast('Restore complete: ' + added + ' bills added, ' + updated + ' bills updated, ' + products.length + ' products restored.', 'success', 6000);
+
+        await syncAllData();
+        refreshSavedCount();
+        renderSaved();
+        renderProducts();
+        showTab('saved');
       }
 
       showModal({
-        title: 'Restore backup', icon: 'bi-upload',
-        body: '<p class="mb-1">Found <strong>' + bills.length + '</strong> bill(s), <strong>' + products.length + '</strong> product(s) and <strong>' + rawCustomers.length + '</strong> customer(s) in this backup.</p>' +
-              '<p class="small text-muted mb-0"><strong>Merge</strong> keeps current data and adds/updates matching records. <strong>Replace</strong> replaces saved bills and the product/customer lists included in this backup.</p>',
+        title: 'Restore Database to MySQL',
+        icon: 'bi-cloud-arrow-up-fill',
+        body: '<div class="alert alert-info py-2 px-3 small mb-2"><i class="bi bi-info-circle me-1"></i>Found <strong>' + bills.length + '</strong> bill(s), <strong>' + products.length + '</strong> product(s) and <strong>' + rawCustomers.length + '</strong> customer(s) in this backup.</div>' +
+              '<p class="small text-muted mb-0"><strong>Merge</strong> keeps current MySQL records and adds/updates matching records. <strong>Replace All</strong> clears MySQL database and restores fresh from this backup.</p>',
         actions: [
           { label: 'Cancel', cls: 'btn-outline-secondary' },
           { label: 'Replace all', cls: 'btn-outline-danger', onClick: function () { apply('replace'); } },
-          { label: 'Merge', cls: 'btn-navy', onClick: function () { apply('merge'); } }
+          { label: 'Merge (Recommended)', cls: 'btn-navy', onClick: function () { apply('merge'); } }
         ]
       });
     };
@@ -2009,17 +2840,30 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
      16. TABS + INIT
      ------------------------------------------------------------ */
   function showTab(name) {
-    var isNew = name === 'new', isSaved = name === 'saved', isProducts = name === 'products', isReports = name === 'reports';
+    var isNew = name === 'new';
+    var isSaved = name === 'saved';
+    var isProducts = name === 'products';
+    var isCustomers = name === 'customers';
+    var isReports = name === 'reports';
+    var isBackup = name === 'backup';
+
     $('#paneNew').classList.toggle('d-none', !isNew);
     $('#paneSaved').classList.toggle('d-none', !isSaved);
     $('#paneProducts').classList.toggle('d-none', !isProducts);
+    $('#paneCustomers').classList.toggle('d-none', !isCustomers);
     $('#paneReports').classList.toggle('d-none', !isReports);
+    $('#paneBackup').classList.toggle('d-none', !isBackup);
+
     $('#tabNew').classList.toggle('active', isNew);
     $('#tabSaved').classList.toggle('active', isSaved);
     $('#tabProducts').classList.toggle('active', isProducts);
+    $('#tabCustomers').classList.toggle('active', isCustomers);
     $('#tabReports').classList.toggle('active', isReports);
+    $('#tabBackup').classList.toggle('active', isBackup);
+
     if (isSaved) renderSaved();
     if (isProducts) renderProducts();
+    if (isCustomers) renderCustomersLedger();
     if (isReports) renderAnnualReport();
   }
 
@@ -2041,10 +2885,109 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
     $('#tabNew').addEventListener('click', function () { showTab('new'); });
     $('#tabSaved').addEventListener('click', function () { showTab('saved'); });
     $('#tabProducts').addEventListener('click', function () { showTab('products'); });
+    $('#tabCustomers').addEventListener('click', function () { showTab('customers'); });
     $('#tabReports').addEventListener('click', function () { showTab('reports'); });
+    $('#tabBackup').addEventListener('click', function () { showTab('backup'); });
+
+    // Filter pills on Saved Bills
+    $('#billStatusFilters').addEventListener('click', function (e) {
+      var pill = e.target.closest('.filter-pill');
+      if (!pill) return;
+      $('#billStatusFilters .filter-pill').forEach(function (p) { p.classList.remove('active'); });
+      pill.classList.add('active');
+      billStatusFilter = pill.getAttribute('data-filter') || 'all';
+      renderSaved();
+    });
+
+    $('#billDateFilter').addEventListener('change', function () {
+      billDateFilter = this.value;
+      renderSaved();
+    });
+
+    $('#btnExportExcelBills').addEventListener('click', exportFilteredBillsExcel);
+    $('#btnSavedImportBills').addEventListener('click', function () { $('#billsImportFile').click(); });
+    $('#billsImportFile').addEventListener('change', function () {
+      if (this.files && this.files[0]) importBillsFile(this.files[0]);
+      this.value = '';
+    });
+
+    // POS Thermal Receipt Button on New Bill summary
+    $('#btnReceipt').addEventListener('click', function () {
+      if (!validateBill()) return;
+      var bill = buildBill();
+      rememberCustomer(bill.customer);
+      deliverThermalReceipt(bill);
+    });
+
+    // Customer ledger search & actions
+    $('#custLedgerSearch').addEventListener('input', renderCustomersLedger);
+    $('#custLedgerRows').addEventListener('click', function (e) {
+      var waBtn = e.target.closest('.send-reminder-btn');
+      if (waBtn) {
+        var p = waBtn.getAttribute('data-phone');
+        var n = waBtn.getAttribute('data-name');
+        var d = waBtn.getAttribute('data-due');
+        sendCustomerWhatsAppReminder(n, p, d);
+        return;
+      }
+      var filterBtn = e.target.closest('.filter-cust-bills-btn');
+      if (filterBtn) {
+        var query = filterBtn.getAttribute('data-phone');
+        $('#searchBox').value = query;
+        showTab('saved');
+        renderSaved();
+      }
+    });
+
+    // Backup & Import Center Actions
+    $('#btnExportBackupMain').addEventListener('click', exportBackup);
+    $('#btnSampleBackup').addEventListener('click', downloadSampleBackup);
+    $('#btnImportBackupMain').addEventListener('click', function () { $('#fileImportMain').click(); });
+    $('#fileImportMain').addEventListener('change', function () {
+      if (this.files && this.files[0]) importBackup(this.files[0]);
+      this.value = '';
+    });
+    $('#btnImportInvoicesExcel').addEventListener('click', function () { $('#billsImportFile').click(); });
+    $('#btnImportProductsExcel').addEventListener('click', function () { $('#productImportFile').click(); });
+    $('#btnDownloadInvoiceTemplate').addEventListener('click', downloadInvoiceTemplate);
+    $('#btnDownloadProductTemplateExcel').addEventListener('click', downloadProductTemplateExcel);
+
+    // Keyboard Shortcuts Button
+    $('#btnShortcuts').addEventListener('click', function () {
+      showModal({
+        title: 'Keyboard Shortcuts (Power Billing)',
+        icon: 'bi-keyboard-fill',
+        body: '<table class="table table-sm align-middle mb-0">' +
+              '<tr><td><kbd>Ctrl</kbd> + <kbd>S</kbd></td><td>Save bill to MySQL database</td></tr>' +
+              '<tr><td><kbd>Ctrl</kbd> + <kbd>P</kbd></td><td>Generate &amp; download PDF invoice (A4)</td></tr>' +
+              '<tr><td><kbd>Ctrl</kbd> + <kbd>N</kbd></td><td>Start fresh new bill / clear inputs</td></tr>' +
+              '<tr><td><kbd>Alt</kbd> + <kbd>A</kbd></td><td>Add item to bill</td></tr>' +
+              '<tr><td><kbd>Ctrl</kbd> + <kbd>F</kbd></td><td>Quick search in current tab</td></tr>' +
+              '</table>',
+        actions: [{ label: 'Close', cls: 'btn-navy' }]
+      });
+    });
+
+    // Global Keyboard Shortcuts
+    window.addEventListener('keydown', function (e) {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        $('#btnSave').click();
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'p') {
+        e.preventDefault();
+        $('#btnPdf').click();
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'n') {
+        e.preventDefault();
+        $('#btnNew').click();
+      } else if (e.altKey && e.key.toLowerCase() === 'a') {
+        e.preventDefault();
+        $('#btnAddItem').click();
+      }
+    });
+
     $('#reportYear').addEventListener('change', renderAnnualReport);
     $('#productSearch').addEventListener('input', renderProducts);
-    $('#productTemplateBtn').addEventListener('click', downloadProductTemplate);
+    $('#productTemplateBtn').addEventListener('click', downloadProductTemplateExcel);
     $('#productImportBtn').addEventListener('click', function () { $('#productImportFile').click(); });
     $('#productImportFile').addEventListener('change', function () {
       if (this.files && this.files[0]) importProductFile(this.files[0]);
@@ -2183,5 +3126,35 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
 </script>
+
+<!-- Thermal 80mm Print Container -->
+<div id="thermalPrintArea" style="display:none"></div>
+
+<!-- Keyboard Shortcuts Modal Template -->
+<div class="modal fade" id="shortcutsModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:18px">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold" style="color:var(--navy)"><i class="bi bi-keyboard me-2" style="color:var(--gold)"></i>Keyboard Shortcuts</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-sm align-middle">
+          <tbody>
+            <tr><td><kbd>Ctrl</kbd> + <kbd>S</kbd></td><td>Save current bill to MySQL database</td></tr>
+            <tr><td><kbd>Ctrl</kbd> + <kbd>P</kbd></td><td>Generate &amp; download PDF invoice (A4)</td></tr>
+            <tr><td><kbd>Ctrl</kbd> + <kbd>N</kbd></td><td>Start fresh new bill / clear inputs</td></tr>
+            <tr><td><kbd>Alt</kbd> + <kbd>A</kbd></td><td>Add item to bill table</td></tr>
+            <tr><td><kbd>Ctrl</kbd> + <kbd>F</kbd></td><td>Focus search bar in current tab</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-sm btn-navy" data-bs-dismiss="modal">Got it</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

@@ -18,3 +18,4 @@ fs.writeFileSync(path.join(pubDir, 'index.html'), content, 'utf-8');
 fs.writeFileSync(path.join(__dirname, 'index.html'), content, 'utf-8');
 
 console.log('Build completed! Original design synchronized across client/dist, public, and root.');
+

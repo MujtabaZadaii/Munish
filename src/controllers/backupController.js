@@ -85,12 +85,23 @@ async function restoreBackup(req, res) {
   try {
     await connection.beginTransaction();
 
-    const data = req.body;
-    const mode = req.query.mode || data.mode || 'merge'; // 'merge' or 'replace'
+    const data = req.body || {};
+    const mode = String(req.query.mode || data.mode || 'merge').toLowerCase(); // 'merge' or 'replace'
 
-    const rawBills = Array.isArray(data) ? data : (data && Array.isArray(data.bills) ? data.bills : []);
-    const rawProducts = !Array.isArray(data) && data && Array.isArray(data.products) ? data.products : [];
-    const rawCustomers = !Array.isArray(data) && data && Array.isArray(data.customers) ? data.customers : [];
+    // Extract records supporting all backup shapes
+    let rawBills = [];
+    let rawProducts = [];
+    let rawCustomers = [];
+    let backupCounter = null;
+
+    if (Array.isArray(data)) {
+      rawBills = data;
+    } else if (typeof data === 'object') {
+      if (Array.isArray(data.bills)) rawBills = data.bills;
+      if (Array.isArray(data.products)) rawProducts = data.products;
+      if (Array.isArray(data.customers)) rawCustomers = data.customers;
+      if (data.counter != null) backupCounter = Number(data.counter);
+    }
 
     if (mode === 'replace') {
       await connection.query('DELETE FROM bill_items');
@@ -105,53 +116,68 @@ async function restoreBackup(req, res) {
 
     // 1. Process Bills
     for (const b of rawBills) {
-      if (!b || typeof b !== 'object' || !b.customer) continue;
+      if (!b || typeof b !== 'object') continue;
       const id = String(b.id || 'b' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8));
-      const invoiceNo = String(b.invoiceNo || 'INV-0000').slice(0, 50);
-      const billDate = /^\d{4}-\d{2}-\d{2}$/.test(b.date || '') ? b.date : new Date().toISOString().slice(0, 10);
-      const custName = String(b.customer.name || '').trim().slice(0, 150);
-      const custPhone = String(b.customer.phone || '').trim().slice(0, 50);
-      const custAddress = String(b.customer.address || '').trim();
-      const items = Array.isArray(b.items) ? b.items : [];
+      const invoiceNo = String(b.invoiceNo || b.invoice_no || 'INV-0000').slice(0, 50);
+      const billDate = /^\d{4}-\d{2}-\d{2}$/.test(b.date || b.bill_date || '')
+        ? (b.date || b.bill_date)
+        : new Date().toISOString().slice(0, 10);
 
+      const custObj = b.customer || {};
+      const custName = String(custObj.name || b.customer_name || 'Walk-in Customer').trim().slice(0, 150);
+      const custPhone = String(custObj.phone || b.customer_phone || '').trim().slice(0, 50);
+      const custAddress = String(custObj.address || b.customer_address || '').trim();
+
+      const items = Array.isArray(b.items) ? b.items : [];
       if (!items.length) continue;
 
-      const calc = calculateBill(b);
-      const createdAt = Number(b.createdAt) || Date.now();
-      const updatedAt = Number(b.updatedAt) || Date.now();
+      const calc = calculateBill({
+        items,
+        discType: b.discType || b.disc_type,
+        discValue: b.discValue != null ? b.discValue : b.disc_value,
+        charges: b.charges,
+        received: b.received
+      });
 
-      const [existing] = await connection.query('SELECT id, updated_at FROM bills WHERE id = ?', [id]);
+      const createdAt = Number(b.createdAt || b.created_at) || Date.now();
+      const updatedAt = Number(b.updatedAt || b.updated_at) || Date.now();
 
+      // Check if bill exists by ID or by invoice number to prevent duplicate key error
+      const [existing] = await connection.query(
+        'SELECT id, updated_at FROM bills WHERE id = ? OR invoice_no = ?',
+        [id, invoiceNo]
+      );
+
+      let targetId = id;
       if (existing.length > 0) {
-        if (updatedAt >= Number(existing[0].updated_at)) {
-          await connection.query(
-            `UPDATE bills SET
-              invoice_no = ?, bill_date = ?, customer_name = ?, customer_phone = ?, customer_address = ?,
-              disc_type = ?, disc_value = ?, charges = ?, received = ?, subtotal = ?, discount_amt = ?,
-              grand_total = ?, balance = ?, updated_at = ?
-             WHERE id = ?`,
-            [
-              invoiceNo,
-              billDate,
-              custName,
-              custPhone,
-              custAddress,
-              b.discType === 'pct' ? 'pct' : 'rs',
-              num(b.discValue),
-              num(b.charges),
-              num(b.received),
-              calc.subtotal,
-              calc.discountAmt,
-              calc.grand,
-              calc.balance,
-              updatedAt,
-              id
-            ]
-          );
+        targetId = existing[0].id;
+        await connection.query(
+          `UPDATE bills SET
+            invoice_no = ?, bill_date = ?, customer_name = ?, customer_phone = ?, customer_address = ?,
+            disc_type = ?, disc_value = ?, charges = ?, received = ?, subtotal = ?, discount_amt = ?,
+            grand_total = ?, balance = ?, updated_at = ?
+           WHERE id = ?`,
+          [
+            invoiceNo,
+            billDate,
+            custName,
+            custPhone,
+            custAddress,
+            b.discType === 'pct' ? 'pct' : 'rs',
+            num(b.discValue != null ? b.discValue : b.disc_value),
+            num(b.charges),
+            num(b.received),
+            calc.subtotal,
+            calc.discountAmt,
+            calc.grand,
+            calc.balance,
+            updatedAt,
+            targetId
+          ]
+        );
 
-          await connection.query('DELETE FROM bill_items WHERE bill_id = ?', [id]);
-          updatedBills++;
-        }
+        await connection.query('DELETE FROM bill_items WHERE bill_id = ?', [targetId]);
+        updatedBills++;
       } else {
         await connection.query(
           `INSERT INTO bills (
@@ -167,7 +193,7 @@ async function restoreBackup(req, res) {
             custPhone,
             custAddress,
             b.discType === 'pct' ? 'pct' : 'rs',
-            num(b.discValue),
+            num(b.discValue != null ? b.discValue : b.disc_value),
             num(b.charges),
             num(b.received),
             calc.subtotal,
@@ -181,6 +207,7 @@ async function restoreBackup(req, res) {
         addedBills++;
       }
 
+      // Insert line items
       for (let i = 0; i < items.length; i++) {
         const it = items[i];
         const ln = calc.lines[i] || { gross: 0, disc: 0, net: 0 };
@@ -189,7 +216,7 @@ async function restoreBackup(req, res) {
             bill_id, item_order, name, qty, price, disc, disc_type, gross, line_disc, net
           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           [
-            id,
+            targetId,
             i,
             String(it.name || '').trim(),
             num(it.qty),
@@ -201,6 +228,31 @@ async function restoreBackup(req, res) {
             ln.net
           ]
         );
+
+        // Also ensure product is saved
+        if (it.name && num(it.price) > 0) {
+          await connection.query(
+            `INSERT INTO products (name, price) VALUES (?, ?)
+             ON DUPLICATE KEY UPDATE price = VALUES(price), updated_at = CURRENT_TIMESTAMP`,
+            [String(it.name).trim(), num(it.price)]
+          );
+        }
+      }
+
+      // Also ensure customer is remembered
+      if (custName && custPhone) {
+        const [foundCust] = await connection.query('SELECT id FROM customers WHERE phone = ?', [custPhone]);
+        if (foundCust.length > 0) {
+          await connection.query(
+            'UPDATE customers SET name = ?, address = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+            [custName, custAddress, foundCust[0].id]
+          );
+        } else {
+          await connection.query(
+            'INSERT INTO customers (name, phone, address) VALUES (?, ?, ?)',
+            [custName, custPhone, custAddress]
+          );
+        }
       }
 
       const m = /(\d+)\s*$/.exec(invoiceNo);
@@ -209,8 +261,8 @@ async function restoreBackup(req, res) {
 
     // 2. Process Products
     for (const p of rawProducts) {
-      const name = String(p.name || '').trim();
-      const price = num(p.price);
+      const name = String(p.name || p['Product Name'] || '').trim();
+      const price = num(p.price != null ? p.price : p['Selling Price']);
       if (name && price >= 0) {
         await connection.query(
           `INSERT INTO products (name, price) VALUES (?, ?)
@@ -226,17 +278,24 @@ async function restoreBackup(req, res) {
       const phone = String(c.phone || '').trim();
       const address = String(c.address || '').trim();
       if (name && phone) {
-        await connection.query(
-          `INSERT INTO customers (name, phone, address) VALUES (?, ?, ?)
-           ON DUPLICATE KEY UPDATE name = VALUES(name), address = VALUES(address), updated_at = CURRENT_TIMESTAMP`,
-          [name, phone, address]
-        );
+        const [foundCust] = await connection.query('SELECT id FROM customers WHERE phone = ?', [phone]);
+        if (foundCust.length > 0) {
+          await connection.query(
+            'UPDATE customers SET name = ?, address = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+            [name, address, foundCust[0].id]
+          );
+        } else {
+          await connection.query(
+            'INSERT INTO customers (name, phone, address) VALUES (?, ?, ?)',
+            [name, phone, address]
+          );
+        }
       }
     }
 
     // 4. Update Counter
-    if (data.counter && Number(data.counter) > maxInvoiceNum) {
-      maxInvoiceNum = Number(data.counter);
+    if (backupCounter && backupCounter > maxInvoiceNum) {
+      maxInvoiceNum = backupCounter;
     }
     if (maxInvoiceNum > 0) {
       await connection.query(
@@ -250,18 +309,19 @@ async function restoreBackup(req, res) {
 
     res.json({
       success: true,
-      message: `Restore complete: ${addedBills} bills added, ${updatedBills} bills updated, ${rawProducts.length} products restored.`,
+      message: `Restore complete: ${addedBills} bills added, ${updatedBills} bills updated, ${rawProducts.length} products processed.`,
       stats: {
         addedBills,
         updatedBills,
         products: rawProducts.length,
-        customers: rawCustomers.length
+        customers: rawCustomers.length,
+        mode
       }
     });
   } catch (err) {
     await connection.rollback();
     console.error('Error in restoreBackup:', err);
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: 'Restore failed: ' + err.message });
   } finally {
     connection.release();
   }
@@ -271,4 +331,3 @@ module.exports = {
   exportBackup,
   restoreBackup
 };
-
