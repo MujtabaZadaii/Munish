@@ -786,21 +786,21 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
 
     <!-- Data Import Guide & Schema Specification -->
     <div class="card card-soft">
-      <div class="card-header"><span class="step"><i class="bi bi-info-circle-fill"></i></span><h3 class="card-title-text">Data Import &amp; Template Guide (ڈیٹا امپورٹ کا مکمل طریقہ کار)</h3></div>
+      <div class="card-header"><span class="step"><i class="bi bi-info-circle-fill"></i></span><h3 class="card-title-text">Data Import &amp; Template Guide</h3></div>
       <div class="card-body">
         <div class="row g-4">
           <div class="col-12 col-lg-6">
             <div class="guide-card">
               <h5><i class="bi bi-file-earmark-spreadsheet-fill text-success me-2"></i>1. Invoices Excel Import (.xlsx / .csv)</h5>
-              <p class="small text-muted mb-2">اگر آپ کے پاس ایکسل میں بل موجود ہیں تو نیچے دیے گئے بٹن سے ٹیمپلیٹ ڈاؤن لوڈ کریں اور اسی فارمیٹ میں کالمز بھریں:</p>
+              <p class="small text-muted mb-2">If you have past sales records or invoices in Excel, download the sample template below and organize your columns accordingly:</p>
               <ul class="small mb-3 ps-3">
-                <li><strong>Invoice No</strong> (مثلاً INV-1001) - اگر ایک بل میں 3 پروڈکٹس ہیں تو تینوں لائنوں میں یہی Invoice No لکھیں۔ وہ خودکار ایک ہی بل بن جائیں گی۔</li>
-                <li><strong>Date</strong> (مثلاً 2026-11-20)</li>
-                <li><strong>Customer Name &amp; Phone</strong> (کسٹمر کا نام اور موبائل نمبر)</li>
-                <li><strong>Customer Address</strong> (پتہ یا شہر کا نام)</li>
-                <li><strong>Item Name, Quantity, Price</strong> (پروڈکٹ کا نام، مقدار، اور ریٹ)</li>
-                <li><strong>Discount &amp; Discount Type</strong> (ڈسکاؤنٹ رقم یا فیصد)</li>
-                <li><strong>Bill Discount, Charges, Received</strong> (بل کا کل ڈسکاؤنٹ، کرایہ، اور موصول شدہ کیش)</li>
+                <li><strong>Invoice No</strong> (e.g. INV-1001) - For multi-item invoices, use the same Invoice No across rows. They will automatically be grouped into a single bill.</li>
+                <li><strong>Date</strong> (e.g. 2026-11-20)</li>
+                <li><strong>Customer Name &amp; Phone</strong> (Customer's full name and mobile number)</li>
+                <li><strong>Customer Address</strong> (Delivery address or city)</li>
+                <li><strong>Item Name, Quantity, Price</strong> (Product description, quantity, and selling price)</li>
+                <li><strong>Discount &amp; Discount Type</strong> (Line discount amount or percentage)</li>
+                <li><strong>Bill Discount, Charges, Received</strong> (Overall invoice discount, delivery charges, and cash received)</li>
               </ul>
               <button type="button" class="btn btn-sm btn-outline-success" id="btnDownloadInvoiceTemplate">
                 <i class="bi bi-download me-1"></i> Download Invoices Template (.xlsx)
@@ -811,12 +811,12 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
           <div class="col-12 col-lg-6">
             <div class="guide-card" style="border-left-color:var(--navy)">
               <h5><i class="bi bi-box-seam-fill text-primary me-2"></i>2. Products Catalog Import (.xlsx / .csv)</h5>
-              <p class="small text-muted mb-2">اپنی دکان کے تمام پروڈکٹس اور ریٹس ایک ساتھ ایکسل سے امپورٹ کریں:</p>
+              <p class="small text-muted mb-2">Bulk import your entire shop catalog and price list from an Excel sheet into MySQL in one click:</p>
               <ul class="small mb-3 ps-3">
-                <li><strong>Product Name</strong> (لازمی: آئٹم کا نام جیسے PVC Pipe 1 inch)</li>
-                <li><strong>Selling Price</strong> (لازمی: فروخت کی قیمت جیسے 450)</li>
-                <li><strong>Unit</strong> (اختیاری: Pcs, Kg, Box, Pkt, Dozen, Mtr)</li>
-                <li><strong>Category</strong> (اختیاری: جیسے Sanitary, Hardware)</li>
+                <li><strong>Product Name</strong> (Required: Item name, e.g. PVC Pipe 1 inch)</li>
+                <li><strong>Selling Price</strong> (Required: Price per unit, e.g. 450)</li>
+                <li><strong>Unit</strong> (Optional: Pcs, Kg, Box, Pkt, Dozen, Mtr)</li>
+                <li><strong>Category</strong> (Optional: e.g. Sanitary, Hardware, Fittings)</li>
               </ul>
               <button type="button" class="btn btn-sm btn-outline-primary" id="btnDownloadProductTemplateExcel">
                 <i class="bi bi-download me-1"></i> Download Products Template (.xlsx)
@@ -2717,10 +2717,11 @@ body{background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe
     if (cleanPhone.length === 10 && cleanPhone[0] === '3') cleanPhone = '92' + cleanPhone;
     else if (cleanPhone.length === 11 && cleanPhone[0] === '0') cleanPhone = '92' + cleanPhone.slice(1);
 
-    var text = 'السلام علیکم ' + name + ' صاحب!\n' +
-      'A-One Trade & Supply Network کی طرف سے اطلاع ہے کہ آپ کا بقایا واجب الادا بیلنس: *' + dueStr + '* ہے۔\n' +
-      'برائے مہربانی جلد از جلد ادائیگی فرمائیں۔\n\n' +
-      'شکریہ!\n' +
+    var text = 'Dear ' + name + ',\n' +
+      'Greetings from A-One Trade & Supply Network.\n' +
+      'This is a friendly reminder regarding your pending balance payment of: *' + dueStr + '*.\n' +
+      'Kindly arrange the payment at your earliest convenience.\n\n' +
+      'Thank you for your business!\n' +
       '*A-One Trade & Supply Network*\n' +
       '📞 +92 322 3968631';
 
