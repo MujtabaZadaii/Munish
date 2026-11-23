@@ -2978,10 +2978,16 @@ h1, h2, h3, h4, h5, h6, .brand-name, .price, .t-grand .val, .stat-card .v, .stat
   async function renderProducts() {
     var q = ($('#productSearch').value || '').trim();
     var all = await api.getProducts(q);
-    if (all) { dbProducts = all; store.set(K.products, all); }
-    else { all = loadProducts(); }
+    if (!q && all) {
+      dbProducts = all;
+      store.set(K.products, all);
+    }
+    if (!all) {
+      var full = loadProducts();
+      all = q ? full.filter(function (p) { return (p.name || '').toLowerCase().includes(q.toLowerCase()); }) : full;
+    }
 
-    $('#productCount').textContent = all.length;
+    $('#productCount').textContent = (dbProducts && dbProducts.length) ? dbProducts.length : (loadProducts().length);
     $('#productListCount').textContent = all.length + (all.length === 1 ? ' product' : ' products');
     $('#productsList').innerHTML = all.length ? all.map(function (p, idx) {
       return '<div class="product-row" data-id="' + (p.id || '') + '" data-product-index="' + idx + '">' +
@@ -3648,11 +3654,22 @@ h1, h2, h3, h4, h5, h6, .brand-name, .price, .t-grand .val, .stat-card .v, .stat
       if (this.files && this.files[0]) importProductFile(this.files[0]);
       this.value = '';
     });
+    var productEditingId = null;
+
+    function clearProductForm() {
+      productEditIndex = -1;
+      productEditingId = null;
+      $('#productName').value = '';
+      $('#productPrice').value = '';
+      $('#productSaveBtn').innerHTML = '<i class="bi bi-plus-lg me-1"></i> Save Product';
+      $('#productCancelWrap').classList.add('d-none');
+    }
+
     $('#productForm').addEventListener('submit', async function (e) {
       e.preventDefault();
       var p = normalizeProduct({ name: $('#productName').value, price: $('#productPrice').value });
       if (!p) { toast('Enter a product name and a valid selling price.', 'warning'); return; }
-      var editingId = (productEditIndex >= 0 && dbProducts[productEditIndex]) ? dbProducts[productEditIndex].id : null;
+      var editingId = productEditingId || ((productEditIndex >= 0 && dbProducts[productEditIndex]) ? dbProducts[productEditIndex].id : null);
       try {
         var res = await api.saveProduct(p, editingId);
         if (!res.success) throw new Error(res.message);
@@ -3698,32 +3715,38 @@ h1, h2, h3, h4, h5, h6, .brand-name, .price, .t-grand .val, .stat-card .v, .stat
     });
 
     $('#productsList').addEventListener('click', function (e) {
-      var row = e.target.closest('[data-product-index]'); if (!row) return;
-      var idx = Number(row.getAttribute('data-product-index')), list = loadProducts(), p = list[idx];
+      var row = e.target.closest('[data-id]'); if (!row) return;
+      var prodId = row.getAttribute('data-id');
+      var prodIndex = Number(row.getAttribute('data-product-index'));
+      var list = loadProducts();
+      var p = list.find(function (x) { return String(x.id) === String(prodId); }) || list[prodIndex];
       if (!p) return;
+
       if (e.target.closest('.product-edit')) {
-        productEditIndex = idx; $('#productName').value = p.name; $('#productPrice').value = p.price;
+        productEditingId = p.id || prodId || null;
+        productEditIndex = prodIndex;
+        $('#productName').value = p.name;
+        $('#productPrice').value = p.price;
         $('#productSaveBtn').innerHTML = '<i class="bi bi-check-lg me-1"></i> Update Product';
         $('#productCancelWrap').classList.remove('d-none');
-        $('#productName').focus(); window.scrollTo({ top: 0, behavior: 'smooth' });
+        $('#productName').focus();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (e.target.closest('.product-delete')) {
         confirmDialog('Delete product?', '“' + p.name + '” will be removed from MySQL database.', 'Delete product', true).then(async function (ok) {
           if (!ok) return;
           try {
-            if (p.id) {
-              var res = await api.deleteProduct(p.id);
+            if (p.id || prodId) {
+              var res = await api.deleteProduct(p.id || prodId);
               if (!res.success) throw new Error(res.message);
             }
-            list.splice(idx, 1);
-            dbProducts = list;
-            store.set(K.products, list);
-            if (productEditIndex === idx) clearProductForm();
+            if (productEditingId === (p.id || prodId)) clearProductForm();
             await renderProducts();
             toast('Product deleted from MySQL.', 'success');
           } catch (err) {
-            list.splice(idx, 1);
-            store.set(K.products, list);
-            if (productEditIndex === idx) clearProductForm();
+            var fullList = loadProducts().filter(function (x) { return String(x.id) !== String(p.id || prodId) && x.name !== p.name; });
+            dbProducts = fullList;
+            store.set(K.products, fullList);
+            if (productEditingId === (p.id || prodId)) clearProductForm();
             renderProducts();
             toast('Deleted locally: ' + err.message, 'warning');
           }

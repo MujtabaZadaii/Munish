@@ -1030,3 +1030,4 @@ if (html.includes(oldAttachBlur)) {
 
 fs.writeFileSync(targetFile, html, 'utf8');
 console.log('New file size:', html.length);
+

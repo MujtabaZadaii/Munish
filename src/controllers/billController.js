@@ -197,8 +197,8 @@ async function createBill(req, res) {
     if (!invoiceNo) {
       throw new Error('Invoice Number is required.');
     }
-    if (!custName || !custPhone) {
-      throw new Error('Customer Name and Phone are required.');
+    if (!custName) {
+      throw new Error('Customer Name is required.');
     }
     if (items.length === 0) {
       throw new Error('Bill must contain at least one item.');
@@ -342,7 +342,7 @@ async function updateBill(req, res) {
     const items = Array.isArray(data.items) ? data.items : [];
 
     if (!invoiceNo) throw new Error('Invoice Number is required.');
-    if (!custName || !custPhone) throw new Error('Customer Name and Phone are required.');
+    if (!custName) throw new Error('Customer Name is required.');
     if (items.length === 0) throw new Error('Bill must contain at least one item.');
 
     // Check duplicate invoice_no excluding this bill
