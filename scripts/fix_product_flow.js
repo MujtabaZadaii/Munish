@@ -279,3 +279,4 @@ if (indexHtml.includes(oldProductHandlers)) {
 
 fs.writeFileSync(indexHtmlPath, indexHtml, 'utf8');
 console.log('Script execution complete.');
+
